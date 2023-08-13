@@ -36,8 +36,8 @@ class ModelsTestCase(TestCase):
         self.dashboard2 = Dashboard.objects.create(owner=self.user2)
 
         #Create monthly Budgets
-        self.month1U2 = MonthBudget.objects.create()
-        self.month2U2 = MonthBudget.objects.create()
+        self.month1U2 = MonthBudget.objects.create(dashboard=self.dashboard2)
+        self.month2U2 = MonthBudget.objects.create(dashboard=self.dashboard2)
 
     def testDashboard(self):
         self.assertTrue(self.dashboard1.isValid())
