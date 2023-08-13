@@ -12,7 +12,7 @@ class ModelsTestCase(TestCase):
         self.user1 = User.objects.create(username="user1", password="password123")
 
         #Create dashboard
-        self.dashboard1 = Dashboard.object.create(owner=self.user1)
+        self.dashboard1 = Dashboard.objects.create(owner=self.user1)
 
         #Create monthly Budgets
         self.month1U1 = MonthBudget.objects.create(dashboard=self.dashboard1) 
