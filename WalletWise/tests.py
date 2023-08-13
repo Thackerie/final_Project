@@ -33,7 +33,7 @@ class ModelsTestCase(TestCase):
         #Create User2 and related objects
         self.user2 = User.objects.create(username="user2", password="password123")
         #Create dashboard
-        self.dashboard2 = Dashboard.object.create(owner=self.user2)
+        self.dashboard2 = Dashboard.objects.create(owner=self.user2)
 
         #Create monthly Budgets
         self.month1U2 = MonthBudget.objects.create()
