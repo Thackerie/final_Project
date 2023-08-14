@@ -56,6 +56,16 @@ class ModelsTestCase(TestCase):
         self.assertTrue(self.dashboard1.isValid())
         self.assertFalse(self.dashboard2.isValid())
 
-    def testBudget(self):
+    def testBudget1(self):
+        #tests if the isValid function works
         self.assertTrue(self.month1U1.isValid())
         self.assertFalse(self.month1U2.isValid())
+
+    def testBudget1(self):
+        #test the property functions of the MonthBudget model
+
+        self.assertEqual(self.month1U1.all_funds, 1050)
+        self.assertEqual(self.month1U1.total_Expenses, -1300)
+        self.assertEqual(self.month1U1.total_Income, 700)
+
+        self.assertEqual(self.month1U1.total_Funds, 450)
