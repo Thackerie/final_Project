@@ -28,18 +28,27 @@ class MonthBudget(models.Model):
 
     @property
     def total_Funds(self):
-        total_amount = self.all_funds + self.total_Income + self.total_Expenses
-        return total_amount
+        if self.isValid():
+            total_amount = self.all_funds + self.total_Income + self.total_Expenses
+            return total_amount
+        else:
+            return "Invalid funds changes detected"
 
     @property
     def total_Income(self):
-        total_amount = self.filter(is_expense=True).aggregate(amount_sum=models.Sum('amount'))['amount_sum']
-        return total_amount or 0  # Return 0 if no incomes are associated
+        if self.isValid():
+            total_amount = self.fundsChanges.filter(is_expense=False).aggregate(amount_sum=models.Sum('amount'))['amount_sum']
+            return total_amount or 0  # Return 0 if no incomes are associated
+        else:
+            return "Invalid funds changes detected"
 
     @property
     def total_Expenses(self):
-        total_amount = self.expense.aggregate(amount_sum=models.Sum('amount'))['amount__sum']
-        return total_amount or 0  # Return 0 if no expenses are associated
+        if self.isValid():
+            total_amount = self.fundsChanges.filter(is_expense=True).aggregate(amount_sum=models.Sum('amount'))['amount__sum']
+            return total_amount or 0  # Return 0 if no expenses are associated
+        else:
+            return "Invalid funds changes detected"
 
     @property
     def month(self):
@@ -48,6 +57,14 @@ class MonthBudget(models.Model):
     @property 
     def year(self):
         return self.date.year
+    
+    def isValid(self):
+        valid = True
+        for fundsChange in self.fundsChanges.all():
+            #set valid to False if fundsChange is not valid 
+            #and then keep it at False, regardless of validity of any other fundsChanges
+            valid = valid and fundsChange.isValid()
+        return fundsChange
 
 class Funds(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="funds", on_delete=models.CASCADE)
@@ -59,4 +76,10 @@ class FundsChange(models.Model):
     title = models.CharField(max_length=64)
     amount = models.FloatField()
     dateTime = models.DateTimeField(auto_now_add=True)
-    is_expense = models.BooleanField(default=False)
+    is_expense = models.BooleanField(default=False, blank=False)
+
+    def isValid(self):
+        if self.is_expense:
+            return self.amount < 0
+        else:
+            return self.amount >= 0
