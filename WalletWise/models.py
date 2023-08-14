@@ -15,7 +15,7 @@ class Dashboard(models.Model):
         return len(dates) == len(set(dates))
     
     def isValid(self):
-        return self.openned_before == False and self.months != None and self.month_dates_unique()
+        return self.months != None and self.month_dates_unique()
 
 class MonthBudget(models.Model):
     dashboard = models.ForeignKey("Dashboard", on_delete=models.CASCADE, related_name="months")
@@ -64,7 +64,7 @@ class MonthBudget(models.Model):
             #set valid to False if fundsChange is not valid 
             #and then keep it at False, regardless of validity of any other fundsChanges
             valid = valid and fundsChange.isValid()
-        return fundsChange
+        return valid
 
 class Funds(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="funds", on_delete=models.CASCADE)
