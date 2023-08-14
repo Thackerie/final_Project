@@ -64,8 +64,8 @@ class ModelsTestCase(TestCase):
     def testBudget1(self):
         #test the property functions of the MonthBudget model
 
-        self.assertEqual(self.month1U1.all_funds, 1050)
-        self.assertEqual(self.month1U1.total_Expenses, -1300)
-        self.assertEqual(self.month1U1.total_Income, 700)
+        self.assertEqual(self.month1U1.all_funds, 1050.0)
+        self.assertEqual(self.month1U1.total_Expenses, -1300.0)
+        self.assertEqual(self.month1U1.total_Income, 700.0)
 
-        self.assertEqual(self.month1U1.total_Funds, 450)
+        self.assertEqual(self.month1U1.total_Funds, 450.0)
