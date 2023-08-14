@@ -23,7 +23,7 @@ class MonthBudget(models.Model):
 
     @property
     def all_funds(self):
-        total_amount = self.funds.aggregate(amount_sum=models.Sum('amount'))['amount__sum']
+        total_amount = self.funds.aggregate(amount_sum=models.Sum('amount'))
         return total_amount or 0  # Return 0 if no funds are associated
 
     @property
