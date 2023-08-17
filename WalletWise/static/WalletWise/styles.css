@@ -2,3 +2,7 @@ body {
     padding-top: 70px;
     font-family: 'Inconsolata', monospace;
 }
+
+.dashboard-setup-button {
+    margin-top: 5px;
+}

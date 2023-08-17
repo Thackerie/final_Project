@@ -70,15 +70,16 @@ def signup(request):
         return render(request,"WalletWise/signup.html")
 
 def dashboard_view(request, username):
+
     #Get the correlating user object
     user = User.objects.get(username=username)
 
-    #get the users dashboard
+    #Get the users dashboard
     dashboard = Dashboard.objects.get(owner=user)
 
-    print(dashboard)
     return render(request,"WalletWise/dashboard.html", {
-        'user':user
+        'user':user,
+        'dashboard': dashboard
         })
 
 def settings(request, username):
