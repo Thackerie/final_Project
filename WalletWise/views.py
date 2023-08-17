@@ -60,7 +60,15 @@ def signup(request):
         return render(request,"WalletWise/signup.html")
 
 def dashboard(request, username):
-    return render(request,"WalletWise/index.html")
+    #Get the correlating user object
+    user = User.objects.get(username=username)
+    return render(request,"WalletWise/dashboard.html", {
+        'user':user
+        })
 
 def profile(request, username):
-    return render(request,"WalletWise/index.html")
+    #Get the correlating user object
+    user = User.objects.get(username=username)
+    return render(request,"WalletWise/profile.html", {
+        'user':user
+        })

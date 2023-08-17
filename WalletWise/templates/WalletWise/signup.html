@@ -1,8 +1,8 @@
 {% extends "WalletWise/layout.html" %}
 
 {% block body %}
-
-    <h2>Register</h2>
+<div class="container">
+    <h2>Sign Up</h2>
 
     {% if message %}
         <div>{{ message }}</div>
@@ -26,5 +26,8 @@
     </form>
 
     Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+</div>
+
+    
 
 {% endblock %}
