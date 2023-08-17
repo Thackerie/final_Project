@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.db import IntegrityError
-from .models import User
+from .models import User, Dashboard
 # Create your views here.
 
 
@@ -54,21 +54,36 @@ def signup(request):
             return render(request, "WalletWise/signup.html", {
                 "message": "Username already taken."
             })
+        
+        #Attempt to create new dashboard
+        try:
+            dashboard = Dashboard.objects.create(owner=user)
+            dashboard.save()
+        except IntegrityError:
+            return render(request, "WalletWise/signup.html", {
+                "message": "Internal Issue."
+            })
+
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return dashboard_view(request, user.username)
     else:
         return render(request,"WalletWise/signup.html")
 
-def dashboard(request, username):
+def dashboard_view(request, username):
     #Get the correlating user object
     user = User.objects.get(username=username)
+
+    #get the users dashboard
+    dashboard = Dashboard.objects.get(owner=user)
+
+    print(dashboard)
     return render(request,"WalletWise/dashboard.html", {
         'user':user
         })
 
-def profile(request, username):
+def settings(request, username):
     #Get the correlating user object
     user = User.objects.get(username=username)
-    return render(request,"WalletWise/profile.html", {
+    return render(request,"WalletWise/settings.html", {
         'user':user
         })

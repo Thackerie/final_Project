@@ -15,7 +15,13 @@ class Dashboard(models.Model):
         return len(dates) == len(set(dates))
     
     def isValid(self):
-        return self.months != None and self.month_dates_unique()
+        if self.openned_before == True:
+            return self.months != None and self.month_dates_unique()
+        else:
+            return True
+        
+    def __str__(self) -> str:
+        return f"{self.owner.username}'s Dashboard"
 
 class MonthBudget(models.Model):
     dashboard = models.ForeignKey("Dashboard", on_delete=models.CASCADE, related_name="months")
