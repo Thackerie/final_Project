@@ -76,6 +76,9 @@ class Funds(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="funds", on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
     amount = models.FloatField()
+
+    def __str__(self) -> str:
+        return f"{self.budget.dashboard.owner}'s {self.title}"
     
 class FundsChange(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="fundsChanges", on_delete=models.CASCADE)

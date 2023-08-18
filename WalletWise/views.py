@@ -2,8 +2,9 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
+from django.utils import timezone
 from django.db import IntegrityError
-from .models import User, Dashboard
+from .models import User, Dashboard, Funds, MonthBudget
 # Create your views here.
 
 
@@ -81,6 +82,55 @@ def dashboard_view(request, username):
         'user':user,
         'dashboard': dashboard
         })
+
+def fundForm(request):
+
+    #Get the associated user
+    user = request.user
+
+    
+
+    if request.method == "POST":
+
+        #ENSURE THAT THERE CAN ONLY BE UNIQUE NAMES FOR EVERY MONTH BUDGET(probably make a function in the model that checks for that)
+
+
+        #Get all form data
+        action = request.POST.get('action')
+        title = request.POST.get('title')
+        amount = request.POST.get('amount')
+
+        #Get current date
+        date = timezone.now()
+        month = date.month
+        year = date.year
+
+        #Get monthBudget
+        try:
+            budget = MonthBudget.objects.filter(date__month=month, date__year=year)[0]
+        except IndexError:
+
+            #Get the users dashboard
+            dashboard = Dashboard.objects.get(owner=user)
+            
+            #Create  new budget, if there is none for the current month yet
+            budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
+            budget.save()
+            print("New Dashboard Created")
+
+        funds = Funds.objects.create(title=title, amount=amount, budget=budget)
+        funds.save()
+
+        #Find out wether the page needs to be reloaded
+        if action == "redo":
+            return render(request, "WalletWise/fundForm.html")
+        
+        return redirect(reverse('index'))
+    else:
+        #Get the users dashboard
+        dashboard = Dashboard.objects.get(owner=user)
+
+        return render(request, "WalletWise/fundForm.html")
 
 def settings(request, username):
     #Get the correlating user object
