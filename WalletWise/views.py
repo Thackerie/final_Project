@@ -70,10 +70,10 @@ def signup(request):
     else:
         return render(request,"WalletWise/signup.html")
 
-def dashboard_view(request, username):
+def dashboard_view(request):
 
     #Get the correlating user object
-    user = User.objects.get(username=username)
+    user = request.user
 
     #Get the users dashboard
     dashboard = Dashboard.objects.get(owner=user)
@@ -87,8 +87,6 @@ def fundForm(request):
 
     #Get the associated user
     user = request.user
-
-    
 
     if request.method == "POST":
 
@@ -132,9 +130,9 @@ def fundForm(request):
 
         return render(request, "WalletWise/fundForm.html")
 
-def settings(request, username):
+def settings(request):
     #Get the correlating user object
-    user = User.objects.get(username=username)
+    user = request.user
     return render(request,"WalletWise/settings.html", {
         'user':user
         })
