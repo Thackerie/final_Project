@@ -15,8 +15,8 @@ class Dashboard(models.Model):
         return len(dates) == len(set(dates))
     
     def isValid(self):
-        if self.openned_before == True:
-            return self.months != None and self.month_dates_unique()
+        if self.months != None:
+            return self.month_dates_unique()
         else:
             return True
         
