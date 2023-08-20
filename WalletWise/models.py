@@ -92,3 +92,8 @@ class FundsChange(models.Model):
             return self.amount < 0
         else:
             return self.amount >= 0
+        
+    def __str__(self) -> str:
+        if self.is_expense:
+            return f"{self.budget.dashboard.owner}'s Expense: {self.title}"
+        return f"{self.budget.dashboard.owner}'s Income: {self.title}"

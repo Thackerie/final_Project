@@ -7,6 +7,7 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("signup", views.signup, name="signup"),
     path("fundForm", views.fundForm, name="fundForm"),
+    path("incomeForm", views.incomeForm, name="incomeForm"),
     path("settings", views.settings, name="settings"),
     path("dashboard", views.dashboard_view, name="dashboard")
 ]

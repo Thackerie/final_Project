@@ -2,19 +2,21 @@
 
 {% block body %}
 <div class="container">
-    <h1>Enter New Balance</h1>
-    <form method="post" action="{% url 'fundForm' %}">
+    <h1>Enter New Income</h1>
+    <form method="post" action="{% url 'incomeForm' %}">
         {% csrf_token %}
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" class="form-control" id="title" name="title" aria-describedby="titleHelp" placeholder="Enter Title">
-            <small id="titlelHelp" class="form-text text-muted">You will find your Balance under this title in your dashboard later.</small>
+            <small id="titlelHelp" class="form-text text-muted">You will find your Income under this title in your dashboard later.</small>
         </div>
         <div class="form-group">
             <label for="amount">Amount</label>
             <input type="number" class="form-control" id="amount" name="amount" aria-describedby="amountHelp" placeholder="Amount">
-            <small id="amountHelp" class="form-text text-muted">Enter the Amount allocated to this Balance</small>
+            <small id="amountHelp" class="form-text text-muted">Enter the amount of money you recieved.</small>
         </div>
+        <!-- add an input to specify where the income went to(maybe bank account or cash?) maybe add an option to set a default destination in the account settings-->
+        <!--Think about how to handle shifting of assets between different balances-->
         <button type="submit" class="btn btn-success" name="action" value="submit">Submit</button>
         <button type="submit" class="btn btn-success" name="action" value="redo">Submit and add another.</button>
     </form>
