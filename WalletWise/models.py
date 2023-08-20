@@ -19,7 +19,7 @@ class Dashboard(models.Model):
             return self.month_dates_unique()
         else:
             return True
-        
+
     def __str__(self) -> str:
         return f"{self.owner.username}'s Dashboard"
 

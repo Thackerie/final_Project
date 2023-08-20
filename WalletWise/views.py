@@ -128,7 +128,15 @@ def fundForm(request):
         return render(request, "WalletWise/fundForm.html")
 
 def incomeForm(request):
+    balances = Funds.objects.filter(budget__dashboard__owner=request.user)
 
+    return render(request, "WalletWise/fundsChangeForm.html", {
+        "formType" : "Income",
+        "balances" : balances
+    })
+
+def fundsChangeForm(request):
+    
     #Get the user
     user = request.user
 
@@ -143,6 +151,7 @@ def incomeForm(request):
         action = request.POST.get('action')
         title = request.POST.get('title')
         amount = request.POST.get('amount')
+        formType = request.POST.get('formType')
 
         #Get current date
         date = timezone.now()
@@ -161,15 +170,28 @@ def incomeForm(request):
         income = FundsChange.objects.create(title=title, amount=amount, budget=budget)
         income.save()
 
+        print(formType)
+
         #Find out wether the page needs to be reloaded
         if action == "redo":
-            return render(request, "WalletWise/incomeForm.html")
+            return render(request, "WalletWise/fundsChangeForm.html", {
+                "formType" : formType
+            })
         elif dashboard.openned_before:
             return redirect(reverse('dashboard_view'))
+        elif formType == "Income":
+            return redirect(reverse('expenseForm'))
         else:
             return redirect(reverse('index'))
-    else:
-        return render(request, "WalletWise/incomeForm.html")
+
+def expenseForm(request):
+
+    balances = Funds.objects.filter(budget__dashboard__owner=request.user)
+
+    return render(request, "WalletWise/fundsChangeForm.html", {
+        "formType": "Expense",
+        "balances" : balances
+    })
 
 def settings(request):
     #Get the correlating user object

@@ -1,0 +1,42 @@
+{% extends "WalletWise/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h1>Enter New {{formType}}</h1>
+    <form method="post" action="{% url 'fundsChangeForm' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" aria-describedby="titleHelp" placeholder="Enter Title">
+            <small id="titlelHelp" class="form-text text-muted">You will find your {{formType}} under this title in your dashboard later.</small>
+        </div>
+        <div class="form-group">
+            <label for="amount">Amount</label>
+            <input type="number" class="form-control" id="amount" name="amount" aria-describedby="amountHelp" placeholder="Amount">
+            <small id="amountHelp" class="form-text text-muted">Enter the amount of money here.</small>
+        </div>
+        <div class="form-group">
+            <label for="destination">Destination</label>
+            <select class="form-select form-control" id="destination" aria-describedby="destinationHelp" aria-label="Default select example">
+                <option selected>Select Destination</option>
+                {% for balance in balances %}
+                <option value=balance.title>{{balance.title}}</option>
+                {% endfor %}
+            </select>
+            <small id="destinationHelp" class="form-text text-muted">Select the destination of your {{formType}}.</small>
+        </div>
+        <div class="form-group form-check">
+            <input class="form-check-input" type="checkbox" value="" id="reoccuring" aria-describedby="reoccuringHelp">
+            <label class="form-check-label" for="reoccuring">
+                Reoccurring {{formType}}.
+            </label>
+            <small id="reoccuringHelp" class="form-text text-muted">Check this if your {{formType}} is reoccuring (Like rent,paychecks, etc.)</small>
+        </div>
+        <!--Add an input to specify where the income went to(maybe bank account or cash?) maybe add an option to set a default destination in the account settings-->
+        <!--Think about how to handle shifting of assets between different balances-->
+        <button type="submit" class="btn btn-success" name="action" value="submit">Submit</button>
+        <button type="submit" class="btn btn-success" name="action" value="redo">Submit and add another.</button>
+        <input type="hidden" value={{formType}} name="formType">
+    </form>
+</div>
+{% endblock %}

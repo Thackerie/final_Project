@@ -8,6 +8,8 @@ urlpatterns = [
     path("signup", views.signup, name="signup"),
     path("fundForm", views.fundForm, name="fundForm"),
     path("incomeForm", views.incomeForm, name="incomeForm"),
+    path("expenseForm", views.expenseForm, name="expenseForm"),
+    path("fundsChangeForm", views.fundsChangeForm, name="fundsChangeForm"),
     path("settings", views.settings, name="settings"),
     path("dashboard", views.dashboard_view, name="dashboard")
 ]
