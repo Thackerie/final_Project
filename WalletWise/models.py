@@ -71,6 +71,9 @@ class MonthBudget(models.Model):
             #and then keep it at False, regardless of validity of any other fundsChanges
             valid = valid and fundsChange.isValid()
         return valid
+    
+    def __str__(self) -> str:
+        return f"{self.dashboard.owner}'s Budget({self.month}/{self.year})"
 
 class Funds(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="funds", on_delete=models.CASCADE)
@@ -84,6 +87,8 @@ class FundsChange(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="fundsChanges", on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
     amount = models.FloatField()
+    destination = models.ForeignKey("Funds", related_name="associatedFundsChanges", on_delete=models.CASCADE)
+    reoccuring = models.BooleanField(default=False)
     dateTime = models.DateTimeField(auto_now_add=True)
     is_expense = models.BooleanField(default=False, blank=False)
 

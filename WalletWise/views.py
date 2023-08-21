@@ -75,9 +75,12 @@ def dashboard_view(request):
     #Get the correlating user object
     user = request.user
 
-    #Get the users dashboard
-    dashboard = Dashboard.objects.get(owner=user)
-
+    #Try Getting the users dashboard
+    try:
+        dashboard = Dashboard.objects.get(owner=user)
+    except:
+        #Make a new dashboard if the user does not have one already
+        dashboard = Dashboard.objects.create(owner=user)
     return render(request,"WalletWise/dashboard.html", {
         'user':user,
         'dashboard': dashboard
@@ -151,8 +154,19 @@ def fundsChangeForm(request):
         action = request.POST.get('action')
         title = request.POST.get('title')
         amount = request.POST.get('amount')
+        destinationId = request.POST.get('destination')
+        reoccuring = request.POST.get('reoccuring')
         formType = request.POST.get('formType')
 
+        #Get the the destination by its id
+        destination = Funds.objects.get(id=destinationId)
+
+        #Convert reoccuring value to boolean
+        if reoccuring == "on":
+            reoccuring = True
+        else:
+            reoccuring = False
+    
         #Get current date
         date = timezone.now()
         month = date.month
@@ -167,10 +181,8 @@ def fundsChangeForm(request):
             budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
             budget.save()
 
-        income = FundsChange.objects.create(title=title, amount=amount, budget=budget)
+        income = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring)
         income.save()
-
-        print(formType)
 
         #Find out wether the page needs to be reloaded
         if action == "redo":
