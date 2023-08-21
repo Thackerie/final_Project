@@ -138,6 +138,19 @@ def incomeForm(request):
         "balances" : balances
     })
 
+def createBudget(user, dashboard):
+
+    #Get all reoccurring FundsChange objects belonging to the user
+    reoccurringFundChanges = FundsChange.objects.filter(budget__dashboard__owner=user, reoccuring=True)
+
+    #Create new budget object
+    budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
+    budget.save()
+
+    for oldfundChange in reoccurringFundChanges:
+        fundChange = FundsChange.objects.create(title=oldfundChange.title, amount=oldfundChange.amount, budget=budget, destination=oldfundChange.destination, reoccuring=True)
+        fundChange.save()
+
 def fundsChangeForm(request):
     
     #Get the user
@@ -166,7 +179,7 @@ def fundsChangeForm(request):
             reoccuring = True
         else:
             reoccuring = False
-    
+
         #Get current date
         date = timezone.now()
         month = date.month
@@ -178,11 +191,17 @@ def fundsChangeForm(request):
         except IndexError:
             
             #Create  new budget, if there is none for the current month yet
-            budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
-            budget.save()
+            createBudget(user, dashboard)
+    
+        if formType == "Income":
+            fundsChange = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=False)
+        else:
+            fundsChange = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=True)
+        fundsChange.save()
 
-        income = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring)
-        income.save()
+        #Add/subtract the amount of the income/expense from the destination Fund
+        destination.amount += fundsChange.amount
+        destination.save()
 
         #Find out wether the page needs to be reloaded
         if action == "redo":
