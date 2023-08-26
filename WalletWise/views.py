@@ -166,7 +166,7 @@ def fundsChangeForm(request):
         #Get all form data
         action = request.POST.get('action')
         title = request.POST.get('title')
-        amount = request.POST.get('amount')
+        amount = float(request.POST.get('amount'))
         destinationId = request.POST.get('destination')
         reoccuring = request.POST.get('reoccuring')
         formType = request.POST.get('formType')
@@ -192,28 +192,39 @@ def fundsChangeForm(request):
             
             #Create  new budget, if there is none for the current month yet
             createBudget(user, dashboard)
-    
+
         if formType == "Income":
             fundsChange = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=False)
         else:
-            fundsChange = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=True)
-        fundsChange.save()
-
+            fundsChange = FundsChange.objects.create(title=title, amount=amount*-1, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=True)
         #Add/subtract the amount of the income/expense from the destination Fund
         destination.amount += fundsChange.amount
         destination.save()
 
+        fundsChange.save()
+
+
         #Find out wether the page needs to be reloaded
-        if action == "redo":
-            return render(request, "WalletWise/fundsChangeForm.html", {
-                "formType" : formType
-            })
-        elif dashboard.openned_before:
-            return redirect(reverse('dashboard_view'))
-        elif formType == "Income":
-            return redirect(reverse('expenseForm'))
+
+        if formType == "Income":
+            if action == "submit":
+                if dashboard.openned_before:
+                    return redirect(reverse('dashboard'))
+                else:  
+                    return redirect(reverse('expenseForm'))
+            else:
+                return redirect(reverse('incomeForm'))
         else:
-            return redirect(reverse('index'))
+            if action == "submit":
+                if dashboard.openned_before:
+                    return redirect(reverse('dashboard'))
+                else:
+                    dashboard.openned_before = False
+                    dashboard.save()  
+                    return redirect(reverse('dashboard'))
+            else:
+                return redirect(reverse('expenseForm'))
+            
 
 def expenseForm(request):
 

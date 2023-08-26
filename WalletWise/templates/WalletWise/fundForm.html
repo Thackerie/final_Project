@@ -7,16 +7,19 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" class="form-control" id="title" name="title" aria-describedby="titleHelp" placeholder="Enter Title">
+            <input type="text" class="form-control" id="title" name="title" aria-describedby="titleHelp" placeholder="Enter Title" required title="Please enter a Title">
             <small id="titlelHelp" class="form-text text-muted">You will find your Balance under this title in your dashboard later.</small>
         </div>
         <div class="form-group">
             <label for="amount">Amount</label>
-            <input type="number" class="form-control" id="amount" name="amount" aria-describedby="amountHelp" placeholder="Amount">
+            <input type="number" class="form-control" id="amount" name="amount" aria-describedby="amountHelp" placeholder="Amount" required title="Please enter an Amount">
             <small id="amountHelp" class="form-text text-muted">Enter the Amount allocated to this Balance</small>
         </div>
         <button type="submit" class="btn btn-success" name="action" value="submit">Submit</button>
-        <button type="submit" class="btn btn-success" name="action" value="redo">Submit and add another.</button>
+        <button type="submit" class="btn btn-success" name="action" value="redo">Submit and add another</button>
+        <a href="{% url 'dashboard' %}">
+            <button type="button" class="btn btn-success">Back to Dashboard</button>
+        </a>
     </form>
 </div>
 {% endblock %}
