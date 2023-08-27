@@ -33,14 +33,6 @@ class MonthBudget(models.Model):
         return total_amount or 0  # Return 0 if no funds are associated
 
     @property
-    def total_Funds(self):
-        if self.isValid():
-            total_amount = self.all_funds + self.total_Income + self.total_Expenses
-            return total_amount
-        else:
-            return "Invalid funds changes detected"
-
-    @property
     def total_Income(self):
         if self.isValid():
             total_amount = self.fundsChanges.filter(is_expense=False).aggregate(amount_sum=models.Sum('amount'))['amount_sum']
