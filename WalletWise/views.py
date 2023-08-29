@@ -131,11 +131,18 @@ def fundForm(request):
         return render(request, "WalletWise/fundForm.html")
 
 def incomeForm(request):
-    balances = Funds.objects.filter(budget__dashboard__owner=request.user)
+    user = request.user
+    balances = list(Funds.objects.filter(budget__dashboard__owner=user))
 
+    try:
+        defaultFund = user.defaultFunds.all()[0]
+        balances.remove(defaultFund)
+    except IndexError:
+        defaultFund = "No Default"
     return render(request, "WalletWise/fundsChangeForm.html", {
         "formType" : "Income",
-        "balances" : balances
+        "balances" : balances,
+        "defaultFund" : defaultFund
     })
 
 def createBudget(user, dashboard):
@@ -227,17 +234,43 @@ def fundsChangeForm(request):
             
 
 def expenseForm(request):
+    user = request.user
 
-    balances = Funds.objects.filter(budget__dashboard__owner=request.user)
+    balances = list(Funds.objects.filter(budget__dashboard__owner=user))
+
+    try:
+        defaultFund = user.defaultFunds.all()[0]
+        balances.remove(defaultFund)
+    except IndexError:
+        defaultFund = "No Default"
 
     return render(request, "WalletWise/fundsChangeForm.html", {
         "formType": "Expense",
-        "balances" : balances
+        "balances" : balances,
+        "defaultFund" : defaultFund
     })
 
 def settings(request):
     #Get the correlating user object
     user = request.user
+    balances = Funds.objects.filter(budget__dashboard__owner=user)    
+
+    if request.method == "POST":
+
+        #Get Form Data
+ 
+        oldFund = Funds.objects.get(defaultOwner=user)
+        oldFund.defaultOwner = None
+        oldFund.save()
+
+        defaultFundId = request.POST.get('defaultDestination')
+        fund = Funds.objects.get(id=defaultFundId)
+        fund.defaultOwner = user
+        fund.save()
+
+        
+
     return render(request,"WalletWise/settings.html", {
-        'user':user
+        'user':user,
+        'balances' : balances 
         })

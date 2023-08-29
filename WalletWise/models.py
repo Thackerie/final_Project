@@ -71,6 +71,7 @@ class Funds(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="funds", on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
     amount = models.FloatField()
+    defaultOwner = models.ForeignKey("User", related_name="defaultFunds", on_delete=models.DO_NOTHING, default=None, null=True)
 
     def __str__(self) -> str:
         return f"{self.budget.dashboard.owner}'s {self.title}"
