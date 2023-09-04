@@ -226,7 +226,7 @@ def fundsChangeForm(request):
                 if dashboard.openned_before:
                     return redirect(reverse('dashboard'))
                 else:
-                    dashboard.openned_before = False
+                    dashboard.openned_before = True
                     dashboard.save()  
                     return redirect(reverse('dashboard'))
             else:
