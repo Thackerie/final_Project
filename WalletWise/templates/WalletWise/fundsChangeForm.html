@@ -36,12 +36,23 @@
             </label>
             <small id="reoccuringHelp" class="form-text text-muted">Check this if your {{formType}} is reoccuring (Like rent,paychecks, etc.)</small>
         </div>
-        <!--Add an input to specify where the income went to(maybe bank account or cash?) maybe add an option to set a default destination in the account settings-->
-        <!--Think about how to handle shifting of assets between different balances-->
         <button type="submit" class="btn btn-success" name="action" value="submit">Submit</button>
         <button type="submit" class="btn btn-success" name="action" value="redo">Submit and add another</button>
+        {% if opennedBefore == False %}
+            {% if formType == "Income" %}
+            <!--Change style of anchor tag to not have it be underlined-->
+            <a href="{% url 'expenseForm' %}">
+                <button class="btn btn-success" type="button">Skip</button>
+            </a>
+            {% else %}
+            <a href="{% url 'dashboard' %}">
+                <!--Make it so the dashboard knows that it has been through the setup process-->
+                <button class="btn btn-success" type="button">Skip</button>
+            </a>
+            {% endif %}
+        {% endif %}
         <a href="{% url 'dashboard' %}">
-            <button class="btn btn-success">Back to Dashboard</button>
+            <button class="btn btn-success" type="button">Back to Dashboard</button>
         </a>
         <input type="hidden" value={{formType}} name="formType">
     </form>

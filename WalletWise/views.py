@@ -132,6 +132,7 @@ def fundForm(request):
 
 def incomeForm(request):
     user = request.user
+    opennedBefore = user.dashboard.openned_before
     balances = list(Funds.objects.filter(budget__dashboard__owner=user))
 
     try:
@@ -141,6 +142,7 @@ def incomeForm(request):
         defaultFund = "No Default"
     return render(request, "WalletWise/fundsChangeForm.html", {
         "formType" : "Income",
+        "opennedBefore" : opennedBefore,
         "balances" : balances,
         "defaultFund" : defaultFund
     })
@@ -235,7 +237,7 @@ def fundsChangeForm(request):
 
 def expenseForm(request):
     user = request.user
-
+    opennedBefore = user.dashboard.openned_before
     balances = list(Funds.objects.filter(budget__dashboard__owner=user))
 
     try:
@@ -246,6 +248,7 @@ def expenseForm(request):
 
     return render(request, "WalletWise/fundsChangeForm.html", {
         "formType": "Expense",
+        "opennedBefore" : opennedBefore,
         "balances" : balances,
         "defaultFund" : defaultFund
     })
