@@ -86,6 +86,17 @@ def dashboard_view(request):
         'dashboard': dashboard
         })
 
+def dashboard_finished_view(request):
+
+    #Get the user and their dashboard
+    user = request.user
+    dashboard = Dashboard.objects.get(owner=user)
+    #Set the dashboard to openned before and save changes
+    dashboard.openned_before = True
+    dashboard.save()
+    #Then redirect to the dashboard page
+    return redirect(reverse('dashboard'))
+
 def fundForm(request):
 
     #Get the associated user
