@@ -6,3 +6,7 @@ body {
 .dashboard-setup-button {
     margin-top: 5px;
 }
+
+a.skip {
+    text-decoration: none;
+}

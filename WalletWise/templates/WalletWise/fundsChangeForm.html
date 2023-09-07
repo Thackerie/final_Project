@@ -40,13 +40,11 @@
         <button type="submit" class="btn btn-success" name="action" value="redo">Submit and add another</button>
         {% if opennedBefore == False %}
             {% if formType == "Income" %}
-            <!--Change style of anchor tag to not have it be underlined-->
-            <a href="{% url 'expenseForm' %}">
+            <a class="skip" href="{% url 'expenseForm' %}" >
                 <button class="btn btn-success" type="button">Skip</button>
             </a>
             {% else %}
-            <a href="{% url 'dashboard_finished' %}">
-                <!--Make it so the dashboard knows that it has been through the setup process-->
+            <a class="skip" href="{% url 'dashboard_finished' %}">
                 <button class="btn btn-success" type="button">Skip</button>
             </a>
             {% endif %}
