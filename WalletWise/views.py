@@ -135,7 +135,7 @@ def fundForm(request):
         if action == "redo":
             return render(request, "WalletWise/fundForm.html")
         elif dashboard.openned_before:
-            return redirect(reverse('dashboard_view'))
+            return redirect(reverse('dashboard'))
         else:
             return redirect(reverse('incomeForm'))
     else:
@@ -170,6 +170,64 @@ def createBudget(user, dashboard):
     for oldfundChange in reoccurringFundChanges:
         fundChange = FundsChange.objects.create(title=oldfundChange.title, amount=oldfundChange.amount, budget=budget, destination=oldfundChange.destination, reoccuring=True)
         fundChange.save()
+
+def transferFundsForm(request):
+    user = request.user
+    if request.method == "POST":
+        #Get the users dashboard
+        dashboard = Dashboard.objects.get(owner=user)
+
+        #Get all form data
+        title = request.POST.get('title')
+        amount = float(request.POST.get('amount'))
+        destinationId = request.POST.get('destination')
+        originId = request.POST.get('origin')
+        reoccuring = request.POST.get('reoccuring')
+
+        #Convert reoccuring value to boolean
+        if reoccuring == "on":
+            reoccuring = True
+        else:
+            reoccuring = False
+
+        #Get the the destination by its id
+        destination = Funds.objects.get(id=destinationId)
+
+        #Get the origin by its id
+        origin = Funds.objects.get(id=originId)
+
+        #Get current date
+        date = timezone.now()
+        month = date.month
+        year = date.year
+
+        #Get monthBudget
+        try:
+            budget = MonthBudget.objects.filter(date__month=month, date__year=year)[0]
+        except IndexError:
+            
+            #Create  new budget, if there is none for the current month yet
+            budget = createBudget(user, dashboard)
+
+        #Create an expense taking money from one balance and create an income giving the same amount to the other balance
+        expense = FundsChange.objects.create(title=title, amount=amount*-1, budget=budget, destination=origin, reoccuring=reoccuring, is_expense=True)
+        income = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=False)
+        
+        expense.save()
+        origin.amount += expense.amount
+        origin.save()
+
+        income.save()
+        destination.amount += income.amount
+        destination.save()
+
+
+        return redirect(reverse('dashboard'))
+    
+    balances = list(Funds.objects.filter(budget__dashboard__owner=user))
+    return render(request, "WalletWise/transferFundsForm.html", {
+        "balances" : balances
+    })
 
 def fundsChangeForm(request):
     
@@ -211,7 +269,7 @@ def fundsChangeForm(request):
         except IndexError:
             
             #Create  new budget, if there is none for the current month yet
-            createBudget(user, dashboard)
+            budget = createBudget(user, dashboard)
 
         if formType == "Income":
             fundsChange = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=False)
@@ -223,7 +281,7 @@ def fundsChangeForm(request):
 
         fundsChange.save()
 
-
+        
         #Find out wether the page needs to be reloaded
 
         if formType == "Income":
