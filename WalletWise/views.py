@@ -4,9 +4,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.utils import timezone
 from django.db import IntegrityError
+from .viewsHelpers import getBudget, getFundFormData, createFunds, getTransferFundsFormData, createExpense, createincome
 from .models import User, Dashboard, Funds, MonthBudget, FundsChange
 # Create your views here.
-
 
 def index(request):
     return render(request, "WalletWise/index.html") 
@@ -70,6 +70,33 @@ def signup(request):
     else:
         return render(request,"WalletWise/signup.html")
 
+def settings(request):
+    #Get the correlating user object
+    user = request.user
+    balances = Funds.objects.filter(budget__dashboard__owner=user)    
+
+    if request.method == "POST":
+
+        #Get Form Data
+        try:
+            oldFund = Funds.objects.get(defaultOwner=user)
+            oldFund.defaultOwner = None
+            oldFund.save()
+        except:
+            ...
+
+        defaultFundId = request.POST.get('defaultDestination')
+        fund = Funds.objects.get(id=defaultFundId)
+        fund.defaultOwner = user
+        fund.save()
+
+        
+
+    return render(request,"WalletWise/settings.html", {
+        'user':user,
+        'balances' : balances 
+        })
+
 def dashboard_view(request):
 
     #Get the correlating user object
@@ -86,7 +113,7 @@ def dashboard_view(request):
         'dashboard': dashboard
         })
 
-def dashboard_finished_view(request):
+def dashboard_finished(request):
 
     #Get the user and their dashboard
     user = request.user
@@ -97,6 +124,19 @@ def dashboard_finished_view(request):
     #Then redirect to the dashboard page
     return redirect(reverse('dashboard'))
 
+def createBudget(user, dashboard):
+
+    #Get all reoccurring FundsChange objects belonging to the user
+    reoccurringFundChanges = FundsChange.objects.filter(budget__dashboard__owner=user, reoccuring=True)
+
+    #Create new budget object
+    budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
+    budget.save()
+
+    for oldfundChange in reoccurringFundChanges:
+        fundChange = FundsChange.objects.create(title=oldfundChange.title, amount=oldfundChange.amount, budget=budget, destination=oldfundChange.destination, reoccuring=True)
+        fundChange.save()
+
 def fundForm(request):
 
     #Get the associated user
@@ -104,40 +144,25 @@ def fundForm(request):
 
     if request.method == "POST":
 
-        #Get the users dashboard
-        dashboard = Dashboard.objects.get(owner=user)
+        #Get the form data
+        formData = getFundFormData(request,user)
 
-        #ENSURE THAT THERE CAN ONLY BE UNIQUE NAMES FOR EVERY MONTH BUDGET(probably make a function in the model that checks for that)
+        #Get the month budget
+        budget = getBudget(formData["dashboard"])
 
-        #Get all form data
-        action = request.POST.get('action')
-        title = request.POST.get('title')
-        amount = request.POST.get('amount')
+        #Create the funds Object
+        createFunds(formData, budget)
 
-        #Get current date
-        date = timezone.now()
-        month = date.month
-        year = date.year
-
-        #Get monthBudget
-        try:
-            budget = MonthBudget.objects.filter(date__month=month, date__year=year)[0]
-        except IndexError:
-            
-            #Create  new budget, if there is none for the current month yet
-            budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
-            budget.save()
-
-        funds = Funds.objects.create(title=title, amount=amount, budget=budget)
-        funds.save()
 
         #Find out wether the page needs to be reloaded
-        if action == "redo":
+        if formData["action"] == "redo":
             return render(request, "WalletWise/fundForm.html")
-        elif dashboard.openned_before:
+        elif formData["dashboard"].openned_before:
             return redirect(reverse('dashboard'))
         else:
             return redirect(reverse('incomeForm'))
+        
+
     else:
         return render(request, "WalletWise/fundForm.html")
 
@@ -158,70 +183,22 @@ def incomeForm(request):
         "defaultFund" : defaultFund
     })
 
-def createBudget(user, dashboard):
-
-    #Get all reoccurring FundsChange objects belonging to the user
-    reoccurringFundChanges = FundsChange.objects.filter(budget__dashboard__owner=user, reoccuring=True)
-
-    #Create new budget object
-    budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
-    budget.save()
-
-    for oldfundChange in reoccurringFundChanges:
-        fundChange = FundsChange.objects.create(title=oldfundChange.title, amount=oldfundChange.amount, budget=budget, destination=oldfundChange.destination, reoccuring=True)
-        fundChange.save()
-
 def transferFundsForm(request):
+
     user = request.user
+
     if request.method == "POST":
-        #Get the users dashboard
-        dashboard = Dashboard.objects.get(owner=user)
 
-        #Get all form data
-        title = request.POST.get('title')
-        amount = float(request.POST.get('amount'))
-        destinationId = request.POST.get('destination')
-        originId = request.POST.get('origin')
-        reoccuring = request.POST.get('reoccuring')
-
-        #Convert reoccuring value to boolean
-        if reoccuring == "on":
-            reoccuring = True
-        else:
-            reoccuring = False
-
-        #Get the the destination by its id
-        destination = Funds.objects.get(id=destinationId)
-
-        #Get the origin by its id
-        origin = Funds.objects.get(id=originId)
-
-        #Get current date
-        date = timezone.now()
-        month = date.month
-        year = date.year
-
-        #Get monthBudget
-        try:
-            budget = MonthBudget.objects.filter(date__month=month, date__year=year)[0]
-        except IndexError:
-            
-            #Create  new budget, if there is none for the current month yet
-            budget = createBudget(user, dashboard)
+        #Get the form data
+        formData = getTransferFundsFormData(request, user)
+        
+        #Get the month budget
+        budget = getBudget(formData["dashboard"])
 
         #Create an expense taking money from one balance and create an income giving the same amount to the other balance
-        expense = FundsChange.objects.create(title=title, amount=amount*-1, budget=budget, destination=origin, reoccuring=reoccuring, is_expense=True)
-        income = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=False)
+        createExpense(formData, budget)
+        createincome(formData, budget)
         
-        expense.save()
-        origin.amount += expense.amount
-        origin.save()
-
-        income.save()
-        destination.amount += income.amount
-        destination.save()
-
-
         return redirect(reverse('dashboard'))
     
     balances = list(Funds.objects.filter(budget__dashboard__owner=user))
@@ -303,7 +280,6 @@ def fundsChangeForm(request):
             else:
                 return redirect(reverse('expenseForm'))
             
-
 def expenseForm(request):
     user = request.user
     opennedBefore = user.dashboard.openned_before
@@ -321,28 +297,3 @@ def expenseForm(request):
         "balances" : balances,
         "defaultFund" : defaultFund
     })
-
-def settings(request):
-    #Get the correlating user object
-    user = request.user
-    balances = Funds.objects.filter(budget__dashboard__owner=user)    
-
-    if request.method == "POST":
-
-        #Get Form Data
- 
-        oldFund = Funds.objects.get(defaultOwner=user)
-        oldFund.defaultOwner = None
-        oldFund.save()
-
-        defaultFundId = request.POST.get('defaultDestination')
-        fund = Funds.objects.get(id=defaultFundId)
-        fund.defaultOwner = user
-        fund.save()
-
-        
-
-    return render(request,"WalletWise/settings.html", {
-        'user':user,
-        'balances' : balances 
-        })
