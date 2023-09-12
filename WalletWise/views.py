@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.utils import timezone
 from django.db import IntegrityError
-from .viewsHelpers import getBudget, getFundFormData, createFunds, getTransferFundsFormData, createExpense, createincome
+from .viewsHelpers import getBudget, getFundFormData, createFunds, getTransferFundsFormData, createExpense, createIncome, handleFormRedirect, getFundChangeFormData
 from .models import User, Dashboard, Funds, MonthBudget, FundsChange
 # Create your views here.
 
@@ -124,19 +124,6 @@ def dashboard_finished(request):
     #Then redirect to the dashboard page
     return redirect(reverse('dashboard'))
 
-def createBudget(user, dashboard):
-
-    #Get all reoccurring FundsChange objects belonging to the user
-    reoccurringFundChanges = FundsChange.objects.filter(budget__dashboard__owner=user, reoccuring=True)
-
-    #Create new budget object
-    budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
-    budget.save()
-
-    for oldfundChange in reoccurringFundChanges:
-        fundChange = FundsChange.objects.create(title=oldfundChange.title, amount=oldfundChange.amount, budget=budget, destination=oldfundChange.destination, reoccuring=True)
-        fundChange.save()
-
 def fundForm(request):
 
     #Get the associated user
@@ -197,7 +184,7 @@ def transferFundsForm(request):
 
         #Create an expense taking money from one balance and create an income giving the same amount to the other balance
         createExpense(formData, budget)
-        createincome(formData, budget)
+        createIncome(formData, budget)
         
         return redirect(reverse('dashboard'))
     
@@ -213,74 +200,26 @@ def fundsChangeForm(request):
 
     if request.method == "POST":
 
-        #Get the users dashboard
-        dashboard = Dashboard.objects.get(owner=user)
+        formData = getFundChangeFormData(request, user)
 
-        #ENSURE THAT THERE CAN ONLY BE UNIQUE NAMES FOR EVERY MONTH INCOME(probably make a function in the model that checks for that)
+        dashboard = formData["dashboard"]
 
-        #Get all form data
-        action = request.POST.get('action')
-        title = request.POST.get('title')
-        amount = float(request.POST.get('amount'))
-        destinationId = request.POST.get('destination')
-        reoccuring = request.POST.get('reoccuring')
-        formType = request.POST.get('formType')
+        #Get the month budget
+        budget = getBudget(dashboard)
 
-        #Get the the destination by its id
-        destination = Funds.objects.get(id=destinationId)
+        #Get the month budget
+        budget = getBudget(dashboard)
 
-        #Convert reoccuring value to boolean
-        if reoccuring == "on":
-            reoccuring = True
+        if formData["formType"] == "Income":
+            createIncome(formData, budget)
         else:
-            reoccuring = False
-
-        #Get current date
-        date = timezone.now()
-        month = date.month
-        year = date.year
-
-        #Get monthBudget
-        try:
-            budget = MonthBudget.objects.filter(date__month=month, date__year=year)[0]
-        except IndexError:
-            
-            #Create  new budget, if there is none for the current month yet
-            budget = createBudget(user, dashboard)
-
-        if formType == "Income":
-            fundsChange = FundsChange.objects.create(title=title, amount=amount, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=False)
-        else:
-            fundsChange = FundsChange.objects.create(title=title, amount=amount*-1, budget=budget, destination=destination, reoccuring=reoccuring, is_expense=True)
-        #Add/subtract the amount of the income/expense from the destination Fund
-        destination.amount += fundsChange.amount
-        destination.save()
-
-        fundsChange.save()
-
+            createExpense(formData, budget)
         
-        #Find out wether the page needs to be reloaded
-
-        if formType == "Income":
-            if action == "submit":
-                if dashboard.openned_before:
-                    return redirect(reverse('dashboard'))
-                else:  
-                    return redirect(reverse('expenseForm'))
-            else:
-                return redirect(reverse('incomeForm'))
-        else:
-            if action == "submit":
-                if dashboard.openned_before:
-                    return redirect(reverse('dashboard'))
-                else:
-                    dashboard.openned_before = True
-                    dashboard.save()  
-                    return redirect(reverse('dashboard'))
-            else:
-                return redirect(reverse('expenseForm'))
-            
+        #Find out where the page needs to be redirected to
+        return handleFormRedirect(formData["formType"], formData["action"], dashboard)
+        
 def expenseForm(request):
+
     user = request.user
     opennedBefore = user.dashboard.openned_before
     balances = list(Funds.objects.filter(budget__dashboard__owner=user))
