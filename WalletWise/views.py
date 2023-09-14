@@ -71,13 +71,13 @@ def signup(request):
         return render(request,"WalletWise/signup.html")
 
 def settings(request):
-    #Get the correlating user object
+    #Get the correlating user object and balances
     user = request.user
     balances = Funds.objects.filter(budget__dashboard__owner=user)    
 
     if request.method == "POST":
 
-        #Get Form Data
+        #Remove the old defaultFund if there is any
         try:
             oldFund = Funds.objects.get(defaultOwner=user)
             oldFund.defaultOwner = None
@@ -85,12 +85,11 @@ def settings(request):
         except:
             ...
 
+        #Get Form Data
         defaultFundId = request.POST.get('defaultDestination')
         fund = Funds.objects.get(id=defaultFundId)
         fund.defaultOwner = user
         fund.save()
-
-        
 
     return render(request,"WalletWise/settings.html", {
         'user':user,
