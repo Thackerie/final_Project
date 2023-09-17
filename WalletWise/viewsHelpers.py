@@ -141,6 +141,24 @@ def createIncome(formData, budget):
     formData["destination"].amount += income.amount
     formData["destination"].save()
 
+def createTranfer(formData, budget):
+    #Create an expense taking money from one balance and create an income giving the same amount to the other balance
+    expense = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"]*-1)), budget=budget, destination=formData["origin"], reoccuring=formData["reoccuring"], is_expense=True)
+    
+    expense.save()
+
+    #Change the amount of the fund that the expense is coming from
+    formData["origin"].amount += expense.amount
+    formData["origin"].save()
+    
+    income = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"])), budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=False)
+        
+    income.save()
+
+    #Change the amount of the fund that the Income is going to
+    formData["destination"].amount += income.amount
+    formData["destination"].save()
+
 def handleFormRedirect(formType, action,dashboard):
     if formType == "Income":
             if action == "submit":

@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.utils import timezone
 from django.db import IntegrityError
-from .viewsHelpers import getBudget, getFundFormData, createFunds, getTransferFundsFormData, createExpense, createIncome, handleFormRedirect, getFundChangeFormData
+from . import viewsHelpers
 from .models import User, Dashboard, Funds, MonthBudget, FundsChange
 # Create your views here.
 
@@ -113,9 +113,6 @@ def dashboard_view(request):
 
     currentBudget = ""
 
-    
-
-
     for budget in budgets:      
         if timezone.datetime.now().month == budget.month and timezone.datetime.now().year == budget.year:
             currentBudget = budget
@@ -147,13 +144,13 @@ def fundForm(request):
     if request.method == "POST":
 
         #Get the form data
-        formData = getFundFormData(request,user)
+        formData = viewsHelpers.getFundFormData(request,user)
 
         #Get the month budget
-        budget = getBudget(formData["dashboard"])
+        budget = viewsHelpers.getBudget(formData["dashboard"])
 
         #Create the funds Object
-        createFunds(formData, budget)
+        viewsHelpers.createFunds(formData, budget)
 
 
         #Find out wether the page needs to be reloaded
@@ -192,14 +189,13 @@ def transferFundsForm(request):
     if request.method == "POST":
 
         #Get the form data
-        formData = getTransferFundsFormData(request, user)
+        formData = viewsHelpers.getTransferFundsFormData(request, user)
         
         #Get the month budget
-        budget = getBudget(formData["dashboard"])
+        budget = viewsHelpers.getBudget(formData["dashboard"])
 
         #Create an expense taking money from one balance and create an income giving the same amount to the other balance
-        createExpense(formData, budget)
-        createIncome(formData, budget)
+        viewsHelpers.createTranfer(formData, budget)
         
         return redirect(reverse('dashboard'))
     
@@ -215,23 +211,23 @@ def fundsChangeForm(request):
 
     if request.method == "POST":
 
-        formData = getFundChangeFormData(request, user)
+        formData = viewsHelpers.getFundChangeFormData(request, user)
 
         dashboard = formData["dashboard"]
 
         #Get the month budget
-        budget = getBudget(dashboard)
+        budget = viewsHelpers.getBudget(dashboard)
 
         #Get the month budget
-        budget = getBudget(dashboard)
+        budget = viewsHelpers.getBudget(dashboard)
 
         if formData["formType"] == "Income":
-            createIncome(formData, budget)
+            viewsHelpers.createIncome(formData, budget)
         else:
-            createExpense(formData, budget)
+            viewsHelpers.createExpense(formData, budget)
         
         #Find out where the page needs to be redirected to
-        return handleFormRedirect(formData["formType"], formData["action"], dashboard)
+        return viewsHelpers.handleFormRedirect(formData["formType"], formData["action"], dashboard)
         
 def expenseForm(request):
 
