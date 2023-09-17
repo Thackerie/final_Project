@@ -2,6 +2,7 @@ from django.utils import timezone
 from .models import User, Dashboard, Funds, MonthBudget, FundsChange
 from django.urls import reverse
 from django.shortcuts import redirect
+from decimal import Decimal
 
 def getFundChangeFormData(request, user):
 
@@ -119,21 +120,20 @@ def createBudget(dashboard):
     return budget
 
 def createFunds(formData, budget):
-    funds = Funds.objects.create(title=formData["title"], amount=formData["amount"], budget=budget)
+    funds = Funds.objects.create(title=formData["title"], amount=Decimal(str(formData["amount"])), budget=budget)
     funds.save()
 
 def createExpense(formData, budget):
-    expense = FundsChange.objects.create(title = formData["title"], amount=formData["amount"]*-1, budget=budget, destination=formData["origin"], reoccuring=formData["reoccuring"], is_expense=True)
+    expense = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"]*-1)), budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=True)
     
     expense.save()
 
     #Change the amount of the fund that the expense is coming from
-    formData["origin"].amount += expense.amount
-    formData["origin"].save()
+    formData["destination"].amount += expense.amount
+    formData["destination"].save()
 
 def createIncome(formData, budget):
-
-    income = FundsChange.objects.create(title = formData["title"], amount=formData["amount"], budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=False)
+    income = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"])), budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=False)
         
     income.save()
 

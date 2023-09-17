@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from decimal import Decimal, ROUND_DOWN
 
 # Create your models here.
 
@@ -29,22 +30,28 @@ class MonthBudget(models.Model):
 
     @property
     def all_funds(self):
-        total_amount = self.funds.aggregate(amount_sum=models.Sum('amount'))['amount_sum']
-        return total_amount or 0  # Return 0 if no funds are associated
+        total_amount = Decimal(0)
+        if self.funds.aggregate(amount_sum=models.Sum('amount'))['amount_sum']:
+            total_amount = self.funds.aggregate(amount_sum=models.Sum('amount'))['amount_sum']
+        return Decimal(total_amount).quantize(Decimal('0.00'), rounding=ROUND_DOWN) or 0  # Return 0 if no funds are associated
 
     @property
     def total_Income(self):
         if self.isValid():
-            total_amount = self.fundsChanges.filter(is_expense=False).aggregate(amount_sum=models.Sum('amount'))['amount_sum']
-            return total_amount or 0  # Return 0 if no incomes are associated
+            total_amount = Decimal(0)
+            if self.fundsChanges.filter(is_expense=False).aggregate(amount_sum=models.Sum('amount'))['amount_sum']:
+                total_amount = self.fundsChanges.filter(is_expense=False).aggregate(amount_sum=models.Sum('amount'))['amount_sum']
+            return Decimal(total_amount).quantize(Decimal('0.00'), rounding=ROUND_DOWN) or 0  # Return 0 if no incomes are associated
         else:
             return "Invalid funds changes detected"
 
     @property
     def total_Expenses(self):
-        if self.isValid():
-            total_amount = self.fundsChanges.filter(is_expense=True).aggregate(amount_sum=models.Sum('amount'))['amount_sum']
-            return total_amount or 0  # Return 0 if no expenses are associated
+        if self.isValid():  
+            total_amount = Decimal(0)
+            if self.fundsChanges.filter(is_expense=True).aggregate(amount_sum=models.Sum('amount'))['amount_sum']:
+                total_amount = self.fundsChanges.filter(is_expense=True).aggregate(amount_sum=models.Sum('amount'))['amount_sum']
+            return total_amount.quantize(Decimal('0.00'), rounding=ROUND_DOWN) or 0  # Return 0 if no expenses are associated
         else:
             return "Invalid funds changes detected"
 
@@ -70,7 +77,7 @@ class MonthBudget(models.Model):
 class Funds(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="funds", on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
-    amount = models.FloatField()
+    amount = models.DecimalField(decimal_places=2, max_digits=20)
     defaultOwner = models.ForeignKey("User", related_name="defaultFunds", on_delete=models.DO_NOTHING, default=None, null=True)
 
     def __str__(self) -> str:
@@ -79,7 +86,7 @@ class Funds(models.Model):
 class FundsChange(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="fundsChanges", on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
-    amount = models.FloatField()
+    amount = models.DecimalField(decimal_places=2, max_digits=20)
     destination = models.ForeignKey("Funds", related_name="associatedFundsChanges", on_delete=models.CASCADE)
     reoccuring = models.BooleanField(default=False)
     dateTime = models.DateTimeField(auto_now_add=True)

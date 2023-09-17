@@ -9,13 +9,28 @@
     {% if dashboard.openned_before == False %}
         <h1>Dashboard Setup</h1>
         <h5>Welcome to your Personal Dashboard!</h5>
-        <br>
+        <br/>
         <h5>First, we go through the steps to setup your Dashboard together.</h5>
         <a href="{% url 'fundForm' %}">
             <button class="dashboard-setup-button btn btn-success">Setup my Dasboard!</button>
         </a>
     {% else %}
-        <h1>Dashboard</h1>
+        <!--Maybe not have this centered, as it comflicts with the rest of the design of the page-->
+        <div class="text-center">
+            <h1>Dashboard</h1>
+            <h3>{{budget.month}}/{{budget.year}}</h3>
+            <br/>
+            <h3>Total Funds</h3>
+            <h4>{{budget.all_funds}} EUR</h4>
+            <h3>Total Income</h3>
+            <h4>{{budget.total_Income}} EUR</h4>
+            <h3>Total Expenses</h3>
+            <h4>{{budget.total_Expenses}} EUR</h4>
+            <div class="button-div">
+                Buttons here
+                <!--Add the 6 Buttons-->
+            </div>
+        </div>
     {% endif %}
 </div>
     

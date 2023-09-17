@@ -107,9 +107,25 @@ def dashboard_view(request):
     except:
         #Make a new dashboard if the user does not have one already
         dashboard = Dashboard.objects.create(owner=user)
+        
+
+    budgets = dashboard.months.all()
+
+    currentBudget = ""
+
+    
+
+
+    for budget in budgets:      
+        if timezone.datetime.now().month == budget.month and timezone.datetime.now().year == budget.year:
+            currentBudget = budget
+            break
+
+
     return render(request,"WalletWise/dashboard.html", {
         'user':user,
-        'dashboard': dashboard
+        'budget': currentBudget,
+        "dashboard" : dashboard
         })
 
 def dashboard_finished(request):
