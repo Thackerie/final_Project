@@ -10,3 +10,7 @@ body {
 a.skip {
     text-decoration: none;
 }
+
+.button-div{
+    display: inline-block;
+}

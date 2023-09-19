@@ -15,7 +15,7 @@
             <button class="dashboard-setup-button btn btn-success">Setup my Dasboard!</button>
         </a>
     {% else %}
-        <!--Maybe not have this centered, as it comflicts with the rest of the design of the page-->
+        <!--Maybe not have this centered, as it conflicts with the rest of the design of the page-->
         <div class="text-center">
             <h1>Dashboard</h1>
             <h3>{{budget.month}}/{{budget.year}}</h3>
@@ -27,7 +27,33 @@
             <h3>Total Expenses</h3>
             <h4>{{budget.total_Expenses}} EUR</h4>
             <div class="button-div">
-                Buttons here
+                <div class="row">
+                    <div class="col-4-md">
+                        <a href="{% url 'fundForm' %}">
+                            <button class="btn btn-success mb-1">Add Balances</button>
+                        </a>
+                        <br>
+                        <button class="btn btn-success">View Balances</button>
+                    </div>
+                    <div class="col-4-md mx-3">
+                        <a href="{% url 'incomeForm' %}">
+                            <button class="btn btn-success mb-1">Add Incomes</button>
+                        </a>
+                        <br>
+                        <button class="btn btn-success mb-1">View Incomes</button>
+                        <br>
+                        <a href="{% url 'transferFundsForm' %}">
+                            <button class="btn btn-success">Transfer Funds</button>
+                        </a>
+                    </div>
+                    <div class="col-4-md">
+                        <a href="{% url 'expenseForm' %}">
+                            <button class="btn btn-success mb-1">Add Expenses</button>
+                        </a>
+                        <br>
+                        <button class="btn btn-success">View Expenses</button>
+                    </div>
+                </div>
                 <!--Add the 6 Buttons-->
             </div>
         </div>
