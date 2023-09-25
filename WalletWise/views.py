@@ -247,3 +247,12 @@ def expenseForm(request):
         "balances" : balances,
         "defaultFund" : defaultFund
     })
+
+def incomes(request):
+    return render(request, "WalletWise/incomes.html")
+
+def balances(request):
+    return render(request, "WalletWise/balances.html")
+
+def expenses(request):
+    return render(request, "WalletWise/expenses.html")
