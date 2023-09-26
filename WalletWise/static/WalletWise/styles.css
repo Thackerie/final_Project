@@ -14,3 +14,11 @@ a.skip {
 .button-div{
     display: inline-block;
 }
+
+.green{
+    color: green;
+}
+
+.red{
+    color: red;
+}
