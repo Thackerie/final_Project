@@ -66,7 +66,7 @@ def signup(request):
             })
 
         login(request, user)
-        return dashboard_view(request, user.username)
+        return dashboard_view(request)
     else:
         return render(request,"WalletWise/signup.html")
 
