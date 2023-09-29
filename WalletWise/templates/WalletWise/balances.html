@@ -3,8 +3,47 @@
 {% block title %}Balances{% endblock %}
 
 {% block body %}
-<div class="container">
+<div class="container text-center">
     <h1>Balances</h1>
+    <p>All of your Current Balances are listed here. You can deleteold Balances, add new Balances and transfer funds between Balances here too.</p>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <h2 class="col-md-6">Your Balances as of September</h2>
+        <div class="col-md-3"><button class="btn btn-neutral">Other Months</button></div>
+    </div>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">DKB</th>
+                <td>870 EUR</td>
+                <td><button class="btn btn-danger">X</button></td>
+            </tr>
+            <tr>
+                <th scope="row">Bargeld</th>
+                <td>125 EUR</td>
+                <td><button class="btn btn-danger">X</button></td>
+            </tr>
+            <tr>
+                <th scope="row">Haspa</th>
+                <td>200 EUR</td>
+                <td><button class="btn btn-danger">X</button></td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </tbody>
+        <tfoot>
+            <th scope="row">Total</th>
+            <td>1195 EUR</td>
+            <td></td>
+        </tfoot>
+    </table>
 </div>
     
 {% endblock %}
