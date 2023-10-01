@@ -124,6 +124,8 @@ def createBudget(dashboard):
     for balance in oldBalances:
         newBalance = Funds.objects.create(budget=budget, title=balance.title, amount=balance.amount, defaultOwner=balance.defaultOwner)
         newBalance.save()
+        balance.defaultOwner = None
+        balance.save()
 
     #Get all reoccurring FundsChange objects belonging to the user
     reoccurringFundChanges = FundsChange.objects.filter(budget__dashboard__owner=dashboard.owner, reoccuring=True)
