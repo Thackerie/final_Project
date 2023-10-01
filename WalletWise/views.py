@@ -118,6 +118,9 @@ def dashboard_view(request):
             currentBudget = budget
             break
 
+    if currentBudget == "":
+        currentBudget = viewsHelpers.createBudget(dashboard)
+
 
     return render(request,"WalletWise/dashboard.html", {
         'user':user,
@@ -252,7 +255,37 @@ def incomes(request):
     return render(request, "WalletWise/incomes.html")
 
 def balances(request):
-    return render(request, "WalletWise/balances.html")
+    #Get the correlating user object
+    user = request.user
+
+    #Try Getting the users dashboard
+    try:
+        dashboard = Dashboard.objects.get(owner=user)
+    except:
+        #Make a new dashboard if the user does not have one already
+        dashboard = Dashboard.objects.create(owner=user)
+        
+    #DOCUMENT THIS!!
+    budgets = dashboard.months.all()
+
+    currentBudget = ""
+
+    for budget in budgets:    
+
+        if timezone.datetime.now().month == budget.month and timezone.datetime.now().year == budget.year:
+
+            currentBudget = budget
+            break
+
+    if currentBudget == "":
+        currentBudget = viewsHelpers.createBudget(dashboard)
+
+
+    return render(request, "WalletWise/balances.html", {
+        'user':user,
+        'budget': currentBudget,
+        'dashboard' : dashboard
+    })
 
 def expenses(request):
     return render(request, "WalletWise/expenses.html")

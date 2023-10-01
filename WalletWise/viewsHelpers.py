@@ -3,6 +3,7 @@ from .models import User, Dashboard, Funds, MonthBudget, FundsChange
 from django.urls import reverse
 from django.shortcuts import redirect
 from decimal import Decimal
+import datetime
 
 def getFundChangeFormData(request, user):
 
@@ -95,7 +96,7 @@ def getBudget(dashboard):
 
     #Get monthBudget
     try:
-        budget = MonthBudget.objects.filter(date__month=month, date__year=year)[0]
+        budget = MonthBudget.objects.filter(dashboard=dashboard,date__month=month, date__year=year)[0]
     except IndexError:
         #Create  new budget, if there is none for the current month yet
         budget = createBudget(dashboard)
@@ -104,17 +105,36 @@ def getBudget(dashboard):
 
 def createBudget(dashboard):
 
-    #Check wether this actually works
+    #Create new Budget object
+    budget = MonthBudget.objects.create(dashboard=dashboard)
+    budget.save()
+
+
+
+    #try to get last months budget
+    try:
+        lastBudget = MonthBudget.objects.get(dashboard=dashboard,date__month=datetime.datetime.now().month-1)
+    except:
+        return budget
+
+    #get all old balances of the user
+    oldBalances = Funds.objects.filter(budget=lastBudget)
+
+    #create all new budgets for this month
+    for balance in oldBalances:
+        newBalance = Funds.objects.create(budget=budget, title=balance.title, amount=balance.amount, defaultOwner=balance.defaultOwner)
+        newBalance.save()
 
     #Get all reoccurring FundsChange objects belonging to the user
     reoccurringFundChanges = FundsChange.objects.filter(budget__dashboard__owner=dashboard.owner, reoccuring=True)
 
-    #Create new budget object
-    budget = MonthBudget.objects.create(dashboard=dashboard, date=timezone.now().date())
-    budget.save()
-
+    #Add all reoccuring FundsChanges
     for oldfundChange in reoccurringFundChanges:
-        fundChange = FundsChange.objects.create(title=oldfundChange.title, amount=oldfundChange.amount, budget=budget, destination=oldfundChange.destination, reoccuring=True)
+
+        #change the destination to same fund but new budget(e.g. same title, different budget)
+        newDestination = Funds.objects.filter(title=fundChange.destination.title, budget=budget)
+
+        fundChange = FundsChange.objects.create(title=oldfundChange.title, amount=oldfundChange.amount, budget=budget, destination=newDestination, reoccuring=True)
         fundChange.save()
     
     return budget
