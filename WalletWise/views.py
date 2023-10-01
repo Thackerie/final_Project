@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.utils import timezone
+import datetime
 from django.db import IntegrityError
 from . import viewsHelpers
 from .models import User, Dashboard, Funds, MonthBudget, FundsChange
@@ -170,8 +171,9 @@ def fundForm(request):
 
 def incomeForm(request):
     user = request.user
+    budget= MonthBudget.objects.filter(dashboard__owner=user, date__month=datetime.datetime.now().month)[0]
     opennedBefore = user.dashboard.openned_before
-    balances = list(Funds.objects.filter(budget__dashboard__owner=user))
+    balances = list(Funds.objects.filter(budget=budget))
 
     try:
         defaultFund = user.defaultFunds.all()[0]
@@ -235,8 +237,9 @@ def fundsChangeForm(request):
 def expenseForm(request):
 
     user = request.user
+    budget= MonthBudget.objects.filter(dashboard__owner=user, date__month=datetime.datetime.now().month)[0]
     opennedBefore = user.dashboard.openned_before
-    balances = list(Funds.objects.filter(budget__dashboard__owner=user))
+    balances = list(Funds.objects.filter(budget=budget))
 
     try:
         defaultFund = user.defaultFunds.all()[0]
