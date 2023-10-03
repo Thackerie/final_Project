@@ -8,8 +8,18 @@
     <p>All of your Current Balances are listed here. You can delete old Balances, add new Balances and transfer funds between Balances here too.</p>
     <div class="row">
         <div class="col-md-3"></div>
-        <h2 class="col-md-6">Your Balances as of September</h2>
-        <div class="col-md-3"><button class="btn btn-neutral">Other Months</button></div>
+        <h2 class="col-md-6">Your Balances as of {{budget.month}}/{{budget.year}}</h2>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{budget.month}}/{{budget.year}}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {% for month in dashboard.months.all %}
+                <!--Make the href redirect to a special view that just immitates balance view but with different budget set as "currentBudget"-->
+                    <a class="dropdown-item" href="#">{{month.month}}/{{month.year}}</a>
+                {% endfor %}
+            </div>
+        </div>
     </div>
     
     <table class="table">
