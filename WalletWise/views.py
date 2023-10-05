@@ -290,5 +290,19 @@ def balances(request):
         'dashboard' : dashboard
     })
 
+def changeMonth(request, date):
+
+    user = request.user
+
+    dashboard = Dashboard.objects.get(owner=user)
+
+    currentBudget= MonthBudget.objects.filter(date=date, dashboard=dashboard)[0]
+
+    return render(request, "WalletWise/balances.html", {
+        'user':user,
+        'budget': currentBudget,
+        'dashboard' : dashboard
+    })
+
 def expenses(request):
     return render(request, "WalletWise/expenses.html")

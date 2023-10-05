@@ -16,7 +16,9 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 {% for month in dashboard.months.all %}
                 <!--Make the href redirect to a special view that just immitates balance view but with different budget set as "currentBudget"-->
-                    <a class="dropdown-item" href="#">{{month.month}}/{{month.year}}</a>
+                        {% if month != budget %}
+                    	    <a class="dropdown-item" href="{% url 'changeMonth' date=month.date%}">{{month.month}}/{{month.year}}</a>
+                        {% endif %}
                 {% endfor %}
             </div>
         </div>

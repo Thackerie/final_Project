@@ -13,8 +13,10 @@ urlpatterns = [
     path("fundsChangeForm", views.fundsChangeForm, name="fundsChangeForm"),
     path("settings", views.settings, name="settings"),
     path("balances", views.balances, name="balances"),
+    path("balances/<str:date>", views.changeMonth, name="changeMonth"),
     path("incomes", views.incomes, name="incomes"),
     path("expenses", views.expenses, name="expenses"),
     path("dashboard", views.dashboard_view, name="dashboard"),
-    path("dashboard/finished", views.dashboard_finished, name="dashboard_finished")
+    path("dashboard/finished", views.dashboard_finished, name="dashboard_finished"),
+    
 ]
