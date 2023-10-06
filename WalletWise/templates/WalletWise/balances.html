@@ -29,7 +29,7 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Remove</th>
+                <th scope="col">More</th>
             </tr>
         </thead>
         <tbody>
@@ -37,7 +37,7 @@
             <tr>
                 <th scope="row">{{balance.title}}</th>
                 <td>{{balance.amount}} EUR</td>
-                <td><button class="btn btn-danger">X</button></td>
+                <td><a class="btn btn-secondary" href="{% url 'balance' date=budget.date title=balance.title %}" role="button">More</a></td>
             </tr>
             {% endfor %}
         </tbody>
