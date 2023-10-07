@@ -13,14 +13,16 @@
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{budget.month}}/{{budget.year}}
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                {% for month in dashboard.months.all %}
-                <!--Make the href redirect to a special view that just immitates balance view but with different budget set as "currentBudget"-->
-                        {% if month != budget %}
-                    	    <a class="dropdown-item" href="{% url 'changeMonth' date=month.date%}">{{month.month}}/{{month.year}}</a>
-                        {% endif %}
-                {% endfor %}
-            </div>
+            {% if dashboard.months.all|length > 1 %}
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    
+                        {% for month in dashboard.months.all %}
+                                {% if month != budget %}
+                                    <a class="dropdown-item" href="{% url 'changeMonth' date=month.date%}">{{month.month}}/{{month.year}}</a>
+                                {% endif %}
+                        {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
     
