@@ -72,9 +72,28 @@ def signup(request):
         return render(request,"WalletWise/signup.html")
 
 def settings(request):
+
     #Get the correlating user object and balances
+
     user = request.user
-    balances = Funds.objects.filter(budget__dashboard__owner=user)    
+    dashboard = Dashboard.objects.get(owner=user)
+    budgets = MonthBudget.objects.filter(dashboard=dashboard)
+
+    #Loop over all budgets to get the one correlating to the current date
+    currentBudget = ""
+
+    for budget in budgets:
+
+        if timezone.datetime.now().month == budget.month and timezone.datetime.now().year == budget.year:
+
+            currentBudget = budget
+            break
+
+    #if there is no budget for this month yet, create one
+    if currentBudget == "":
+        currentBudget = viewsHelpers.createBudget(dashboard)
+
+    balances = Funds.objects.filter(budget=currentBudget)    
 
     if request.method == "POST":
 
