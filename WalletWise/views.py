@@ -335,7 +335,8 @@ def balance(request, date, title):
     return render(request, "WalletWise/balance.html", {
         'user':user,
         'balance': balance,
-        'dashboard' : dashboard
+        'dashboard' : dashboard,
+        'budget': currentBudget
     })
 
 def expenses(request):

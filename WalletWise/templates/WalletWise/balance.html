@@ -4,6 +4,47 @@
 
 {% block body %}
     <div class="container text-center">
-        <h1>{{balance.title}}</h1>
+        <h1>Balance: {{balance.title}}</h1>
+        
+        <div class="row">
+            <div class="col-md-3"></div>
+            <h2 class="col-md-6">Your Balance as of {{budget.month}}/{{budget.year}}</h2>
+        </div>
+        <h2 style="margin-top: 20px;">{{balance.amount}} EUR</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">More</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fundsChange in balance.associatedFundsChanges.all %}
+                <tr>
+                    <th scope="row">{{fundsChange.title}}</th>
+                    {% if fundsChange.is_expense %}
+                        <td style="color: red;">{{fundsChange.amount}} EUR</td>
+                    {% else %}
+                        <td style="color: green;">{{fundsChange.amount}} EUR</td>
+                    {% endif %}
+                    
+                    <td>{{fundsChange.dateTime}}</td>
+
+                    <td><a class="btn btn-secondary" href="{% url 'balance' date=budget.date title=balance.title %}" role="button">More</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div>
+            <h2>More Options</h2>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-3"><a class="btn btn-warning" href="#" role="button">Edit Name</a></div>
+                <div class="col-md-3"><a class="btn btn-danger" href="#" role="button">Delete</a></div>
+                
+            </div>
+        </div>
     </div>
 {% endblock %}
