@@ -86,6 +86,7 @@ class Funds(models.Model):
 class FundsChange(models.Model):
     budget = models.ForeignKey("MonthBudget",related_name="fundsChanges", on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
+    description = models.CharField(max_length=200, default="No Description")
     amount = models.DecimalField(decimal_places=2, max_digits=20)
     destination = models.ForeignKey("Funds", related_name="associatedFundsChanges", on_delete=models.CASCADE)
     reoccuring = models.BooleanField(default=False)

@@ -341,3 +341,13 @@ def balance(request, date, title):
 
 def expenses(request):
     return render(request, "WalletWise/expenses.html")
+
+def fundsChange(request, fundsTitle, date, balanceTitle):
+
+    fundsChange = FundsChange.objects.filter(title=fundsTitle, budget__date=date)[0]
+    
+    return render(request, "WalletWise/fundsChange.html", {
+        'fundsChange' : fundsChange,
+        'date' : date,
+        'balanceTitle' : balanceTitle
+    })

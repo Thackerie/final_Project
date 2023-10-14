@@ -1,0 +1,23 @@
+{% extends "WalletWise/layout.html" %}
+
+{% block title %}{{fundsChange.title}}{% endblock %}
+
+{% block body %}
+    <div class="container text-center">
+        <h1>{{fundsChange.title}}</h1>
+        
+        <h2>Date: {{fundsChange.dateTime}}</h2>
+
+        <div style="margin-top: 20px;">
+            <a style="float: left;" class="btn btn-danger" href="{% url 'balance' date=date title=balanceTitle  %}" role="button">Back</a>
+            <h2>Amount: {{fundsChange.amount}} EUR</h2>
+            <h3>Description: {{fundsChange.description}}</h3>
+        </div>
+
+        <div>
+            <hr>
+            <h2>More Options</h2>
+            <a class="btn btn-warning" href="#" role="button">Edit Name [TODO]</a>
+        </div>
+    </div>
+{% endblock %}

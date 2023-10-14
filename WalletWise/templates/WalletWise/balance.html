@@ -35,7 +35,7 @@
                         
                         <td>{{fundsChange.dateTime}}</td>
 
-                        <td><a class="btn btn-success" href="{% url 'balance' date=budget.date title=balance.title %}" role="button">More</a></td>
+                        <td><a class="btn btn-success" href="{% url 'fundsChange' date=budget.date balanceTitle=balance.title fundsTitle=fundsChange.title  %}" role="button">More</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

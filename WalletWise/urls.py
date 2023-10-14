@@ -11,6 +11,7 @@ urlpatterns = [
     path("incomeForm", views.incomeForm, name="incomeForm"),
     path("expenseForm", views.expenseForm, name="expenseForm"),
     path("fundsChangeForm", views.fundsChangeForm, name="fundsChangeForm"),
+    path("fundsChange/<str:date>/<str:balanceTitle>/<str:fundsTitle>", views.fundsChange, name="fundsChange"),
     path("settings", views.settings, name="settings"),
     path("balances", views.balances, name="balances"),
     path("balances/<str:date>", views.changeMonth, name="changeMonth"),
