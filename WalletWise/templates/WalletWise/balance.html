@@ -6,11 +6,13 @@
     <div class="container text-center">
         <h1>Balance: {{balance.title}}</h1>
         
-        <div class="row">
-            <div class="col-md-3"></div>
-            <h2 class="col-md-6">Your Balance as of {{budget.month}}/{{budget.year}}</h2>
+        <h2>Your Balance as of {{budget.month}}/{{budget.year}}</h2>
+
+        <div style="margin-top: 20px;">
+            <a style="float: left;" class="btn btn-danger" href="{% url 'balances' %}" role="button">Back</a>
+            <h2>{{balance.amount}} EUR</h2>
         </div>
-        <h2 style="margin-top: 20px;">{{balance.amount}} EUR</h2>
+
         {% if balance.associatedFundsChanges.all|length > 0 %}
             <table class="table">
                 <thead>
@@ -33,7 +35,7 @@
                         
                         <td>{{fundsChange.dateTime}}</td>
 
-                        <td><a class="btn btn-secondary" href="{% url 'balance' date=budget.date title=balance.title %}" role="button">More</a></td>
+                        <td><a class="btn btn-success" href="{% url 'balance' date=budget.date title=balance.title %}" role="button">More</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -46,8 +48,8 @@
             <h2>More Options</h2>
             <div class="row">
                 <div class="col-md-3"></div>
-                <div class="col-md-3"><a class="btn btn-warning" href="#" role="button">Edit Name</a></div>
-                <div class="col-md-3"><a class="btn btn-danger" href="#" role="button">Delete</a></div>
+                <div class="col-md-3"><a class="btn btn-warning" href="#" role="button">Edit Name [TODO]</a></div>
+                <div class="col-md-3"><a class="btn btn-danger" href="#" role="button">Delete [TODO]</a></div>
                 
             </div>
         </div>

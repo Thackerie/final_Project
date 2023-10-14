@@ -6,24 +6,24 @@
 <div class="container text-center">
     <h1>Balances</h1>
     <p>All of your Current Balances are listed here. You can delete old Balances, add new Balances and transfer funds between Balances here too.</p>
-    <div class="row">
-        <div class="col-md-3"></div>
-        <h2 class="col-md-6">Your Balances as of {{budget.month}}/{{budget.year}}</h2>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{budget.month}}/{{budget.year}}
-            </button>
-            {% if dashboard.months.all|length > 1 %}
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    
-                        {% for month in dashboard.months.all %}
-                                {% if month != budget %}
-                                    <a class="dropdown-item" href="{% url 'changeMonth' date=month.date%}">{{month.month}}/{{month.year}}</a>
-                                {% endif %}
-                        {% endfor %}
-                </div>
-            {% endif %}
-        </div>
+    
+    <a style="float: left;" class="btn btn-danger" href="{% url 'dashboard' %}" role="button">Back</a>
+    <h2 style="display: inline-block;">Your Balances as of {{budget.month}}/{{budget.year}}</h2>
+    
+    <div style="float: right;" class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{budget.month}}/{{budget.year}}
+        </button>
+        {% if dashboard.months.all|length > 1 %}
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                
+                    {% for month in dashboard.months.all %}
+                            {% if month != budget %}
+                                <a class="dropdown-item" href="{% url 'changeMonth' date=month.date%}">{{month.month}}/{{month.year}}</a>
+                            {% endif %}
+                    {% endfor %}
+            </div>
+        {% endif %}
     </div>
     
     <table class="table">
@@ -39,7 +39,7 @@
             <tr>
                 <th scope="row">{{balance.title}}</th>
                 <td>{{balance.amount}} EUR</td>
-                <td><a class="btn btn-secondary" href="{% url 'balance' date=budget.date title=balance.title %}" role="button">More</a></td>
+                <td><a class="btn btn-success" href="{% url 'balance' date=budget.date title=balance.title %}" role="button">More</a></td>
             </tr>
             {% endfor %}
         </tbody>
