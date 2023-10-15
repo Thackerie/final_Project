@@ -274,36 +274,13 @@ def expenseForm(request):
     })
 
 def balances(request):
-    #Get the correlating user object
-    user = request.user
-
-    #Try Getting the users dashboard
-    try:
-        dashboard = Dashboard.objects.get(owner=user)
-    except:
-        #Make a new dashboard if the user does not have one already
-        dashboard = Dashboard.objects.create(owner=user)
-        
-    #DOCUMENT THIS!!
-    budgets = dashboard.months.all()
-
-    currentBudget = ""
-
-    for budget in budgets:    
-
-        if timezone.datetime.now().month == budget.month and timezone.datetime.now().year == budget.year:
-
-            currentBudget = budget
-            break
-
-    if currentBudget == "":
-        currentBudget = viewsHelpers.createBudget(dashboard)
+    answer = viewsHelpers.getCurrentBudget(request)
 
 
     return render(request, "WalletWise/balances.html", {
-        'user':user,
-        'budget': currentBudget,
-        'dashboard' : dashboard
+        'user': answer["user"],
+        'budget': answer["currentBudget"],
+        'dashboard' : answer["dashboard"]
     })
 
 def changeMonth(request, date):
@@ -350,34 +327,11 @@ def fundsChange(request, fundsTitle, date, balanceTitle):
     })
 
 def incomes(request):
-    #Get the correlating user object
-    user = request.user
-
-    #Try Getting the users dashboard
-    try:
-        dashboard = Dashboard.objects.get(owner=user)
-    except:
-        #Make a new dashboard if the user does not have one already
-        dashboard = Dashboard.objects.create(owner=user)
-        
-    #DOCUMENT THIS!!
-    budgets = dashboard.months.all()
-
-    currentBudget = ""
-
-    for budget in budgets:    
-
-        if timezone.datetime.now().month == budget.month and timezone.datetime.now().year == budget.year:
-
-            currentBudget = budget
-            break
-
-    if currentBudget == "":
-        currentBudget = viewsHelpers.createBudget(dashboard)
+    answer = viewsHelpers.getCurrentBudget(request)
 
 
     return render(request, "WalletWise/incomes.html", {
-        'user':user,
-        'budget': currentBudget,
-        'dashboard' : dashboard
+        'user': answer["user"],
+        'budget': answer["currentBudget"],
+        'dashboard' : answer["dashboard"]
     })

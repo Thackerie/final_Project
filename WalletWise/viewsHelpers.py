@@ -200,3 +200,35 @@ def handleFormRedirect(formType, action,dashboard):
                 return redirect(reverse('dashboard'))
         else:
             return redirect(reverse('expenseForm'))
+        
+def getCurrentBudget(request):
+    #Get the correlating user object
+    user = request.user
+
+    #Try Getting the users dashboard
+    try:
+        dashboard = Dashboard.objects.get(owner=user)
+    except:
+        #Make a new dashboard if the user does not have one already
+        dashboard = Dashboard.objects.create(owner=user)
+        
+    #DOCUMENT THIS!!
+    budgets = dashboard.months.all()
+
+    currentBudget = ""
+
+    for budget in budgets:    
+
+        if timezone.datetime.now().month == budget.month and timezone.datetime.now().year == budget.year:
+
+            currentBudget = budget
+            break
+
+    if currentBudget == "":
+        currentBudget = createBudget(dashboard)
+
+    return {
+        'currentBudget' : currentBudget,
+        'user' : user,
+        'dashboard' : dashboard
+    }
