@@ -3,8 +3,61 @@
 {% block title %}Expenses{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1>Expenses</h1>
+<div class="container text-center">
+    <h1>Incomes</h1>
+    <p>All of your Incomes of the current month are listed here. You can also switch between months to view past incomes.</p>
+    
+    <a style="float: left;" class="btn btn-danger" href="{% url 'dashboard' %}" role="button">Back</a>
+    <h2 style="display: inline-block;">Your Incomes as of {{budget.month}}/{{budget.year}}</h2>
+    
+    <div style="float: right;" class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{budget.month}}/{{budget.year}}
+        </button>
+        {% if dashboard.months.all|length > 1 %}
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                
+                    {% for month in dashboard.months.all %}
+                            {% if month != budget %}
+                                <a class="dropdown-item" href="{% url 'changeMonth' date=month.date%}">{{month.month}}/{{month.year}}</a>
+                            {% endif %}
+                    {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    {% if budget.fundsChanges.all|length > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">More</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fundsChange in budget.fundsChanges.all %}
+                        {% if fundsChange.is_expense %}
+                        <tr>
+                            <th scope="row">{{fundsChange.title}}</th>
+
+                            <td style="color: red;">{{fundsChange.amount}} EUR</td>
+                            <td>{{fundsChange.dateTime}}</td>
+                            <td><a class="btn btn-success" href="{% url 'fundsChange' date=budget.date balanceTitle=fundsChange.destination.title fundsTitle=fundsChange.title  %}" role="button">More</a></td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <th scope="row">Total</th>
+                    <td style="color: red;">{{budget.total_Expenses}} EUR</td>
+                    <td></td>
+                </tfoot>
+            </table>
+        {% else %}
+            <h1 class="my-5">No Expenses made yet.</h1>
+        {% endif %}
 </div>
     
 {% endblock %}

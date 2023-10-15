@@ -1,6 +1,6 @@
 {% extends "WalletWise/layout.html" %}
 
-{% block title %}Balances{% endblock %}
+{% block title %}Incomes{% endblock %}
 
 {% block body %}
 <div class="container text-center">
@@ -51,7 +51,7 @@
                 </tbody>
                 <tfoot>
                     <th scope="row">Total</th>
-                    <td>{{budget.total_Income}} EUR</td>
+                    <td style="color: green;">{{budget.total_Income}} EUR</td>
                     <td></td>
                 </tfoot>
             </table>

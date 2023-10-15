@@ -314,7 +314,14 @@ def balance(request, date, title):
     })
 
 def expenses(request):
-    return render(request, "WalletWise/expenses.html")
+    answer = viewsHelpers.getCurrentBudget(request)
+
+
+    return render(request, "WalletWise/expenses.html", {
+        'user': answer["user"],
+        'budget': answer["currentBudget"],
+        'dashboard' : answer["dashboard"]
+    })
 
 def fundsChange(request, fundsTitle, date, balanceTitle):
 
