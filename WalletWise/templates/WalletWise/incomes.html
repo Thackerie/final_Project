@@ -32,6 +32,7 @@
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Amount</th>
+                        <th scope="col">Destination</th>
                         <th scope="col">Date</th>
                         <th scope="col">More</th>
                     </tr>
@@ -41,8 +42,8 @@
                         {% if not fundsChange.is_expense %}
                         <tr>
                             <th scope="row">{{fundsChange.title}}</th>
-
                             <td style="color: green;">{{fundsChange.amount}} EUR</td>
+                            <td>{{fundsChange.destination.title}}</td>
                             <td>{{fundsChange.dateTime}}</td>
                             <td><a class="btn btn-success" href="{% url 'fundsChange' date=budget.date balanceTitle=fundsChange.destination.title fundsTitle=fundsChange.title  %}" role="button">More</a></td>
                         </tr>
