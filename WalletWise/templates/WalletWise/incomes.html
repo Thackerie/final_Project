@@ -19,7 +19,7 @@
                 
                     {% for month in dashboard.months.all %}
                             {% if month != budget %}
-                                <a class="dropdown-item" href="{% url 'changeMonth' date=month.date%}">{{month.month}}/{{month.year}}</a>
+                                <a class="dropdown-item" href="{% url 'changeMonthIncome' date=month.date%}">{{month.month}}/{{month.year}}</a>
                             {% endif %}
                     {% endfor %}
             </div>

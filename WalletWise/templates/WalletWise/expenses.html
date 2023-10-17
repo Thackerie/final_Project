@@ -4,11 +4,11 @@
 
 {% block body %}
 <div class="container text-center">
-    <h1>Incomes</h1>
-    <p>All of your Incomes of the current month are listed here. You can also switch between months to view past incomes.</p>
+    <h1>Expenses</h1>
+    <p>All of your Expenses of the current month are listed here. You can also switch between months to view past expenses.</p>
     
     <a style="float: left;" class="btn btn-danger" href="{% url 'dashboard' %}" role="button">Back</a>
-    <h2 style="display: inline-block;">Your Incomes as of {{budget.month}}/{{budget.year}}</h2>
+    <h2 style="display: inline-block;">Your Expenses as of {{budget.month}}/{{budget.year}}</h2>
     
     <div style="float: right;" class="dropdown">
         <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -19,7 +19,7 @@
                 
                     {% for month in dashboard.months.all %}
                             {% if month != budget %}
-                                <a class="dropdown-item" href="{% url 'changeMonth' date=month.date%}">{{month.month}}/{{month.year}}</a>
+                                <a class="dropdown-item" href="{% url 'changeMonthExpense' date=month.date%}">{{month.month}}/{{month.year}}</a>
                             {% endif %}
                     {% endfor %}
             </div>
