@@ -17,6 +17,7 @@ def getFundChangeFormData(request, user):
     destinationId = request.POST.get('destination')
     reoccuring = request.POST.get('reoccuring')
     formType = request.POST.get('formType')
+    description = request.POST.get('description')
 
     #Get the the destination by its id
     destination = Funds.objects.get(id=destinationId)
@@ -34,7 +35,8 @@ def getFundChangeFormData(request, user):
         "amount": amount,
         "destination" : destination,
         "reoccuring" : reoccuring,
-        "formType": formType
+        "formType": formType,
+        "description" : description
     }
 
 def getFundFormData(request, user):
@@ -146,7 +148,7 @@ def createFunds(formData, budget):
     funds.save()
 
 def createExpense(formData, budget):
-    expense = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"]*-1)), budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=True)
+    expense = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"]*-1)), budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=True, description=formData["description"])
     
     expense.save()
 
@@ -155,8 +157,7 @@ def createExpense(formData, budget):
     formData["destination"].save()
 
 def createIncome(formData, budget):
-    income = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"])), budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=False)
-        
+    income = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"])), budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=False, description=formData["description"])
     income.save()
 
     #Change the amount of the fund that the Income is going to
@@ -166,7 +167,6 @@ def createIncome(formData, budget):
 def createTranfer(formData, budget):
     #Create an expense taking money from one balance and create an income giving the same amount to the other balance
     expense = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"]*-1)), budget=budget, destination=formData["origin"], reoccuring=formData["reoccuring"], is_expense=True)
-    
     expense.save()
 
     #Change the amount of the fund that the expense is coming from
