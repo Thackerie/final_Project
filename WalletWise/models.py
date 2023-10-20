@@ -98,6 +98,12 @@ class FundsChange(models.Model):
             return self.amount < 0
         else:
             return self.amount >= 0
+
+    @property    
+    def type(self):
+        if self.is_expense:
+            return "Expense"
+        return "Income"
         
     def __str__(self) -> str:
         if self.is_expense:
