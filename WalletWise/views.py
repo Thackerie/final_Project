@@ -364,9 +364,24 @@ def fundsChange(request, fundsTitle, date, balanceTitle):
 def incomes(request):
     answer = viewsHelpers.getCurrentBudget(request)
 
-
     return render(request, "WalletWise/incomes.html", {
         'user': answer["user"],
         'budget': answer["currentBudget"],
         'dashboard' : answer["dashboard"]
+    })
+
+def editFundsChange(request, id):
+    user = request.user
+    fundsChange = FundsChange.objects.get(id=id)
+    balances = Funds.objects.filter(budget=fundsChange.budget).exclude(associatedFundsChanges=fundsChange)
+    if fundsChange.is_expense:
+        type = "Expense"
+    else:
+        type = "Income"
+
+    return render(request, "WalletWise/editFundsChange.html", {
+        'user': user,
+        'fundsChange': fundsChange,
+        'balances' : balances,
+        'type' : type
     })

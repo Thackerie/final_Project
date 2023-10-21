@@ -18,9 +18,10 @@ urlpatterns = [
     path("balances/<str:date>/<str:title>", views.balance, name="balance"),
     path("incomes", views.incomes, name="incomes"),
     path("incomes/<str:date>", views.changeMonthIncome, name="changeMonthIncome"),
+    path("fundsChanges/<int:id>/edit", views.editFundsChange, name="editFundsChange"),
     path("expenses", views.expenses, name="expenses"),
     path("expenses/<str:date>", views.changeMonthExpense, name="changeMonthExpense"),
     path("dashboard", views.dashboard_view, name="dashboard"),
-    path("dashboard/finished", views.dashboard_finished, name="dashboard_finished"),
-    
+    path("dashboard/finished", views.dashboard_finished, name="dashboard_finished"),    
+
 ]
