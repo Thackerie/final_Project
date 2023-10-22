@@ -229,13 +229,9 @@ def transferFundsForm(request):
     })
 
 def fundsChangeForm(request):
-    
-    #Get the user
-    user = request.user
-
     if request.method == "POST":
 
-        formData = viewsHelpers.getFundChangeFormData(request, user)
+        formData = viewsHelpers.getFundChangeFormData(request)
 
         dashboard = formData["dashboard"]
 
@@ -371,8 +367,28 @@ def incomes(request):
     })
 
 def editFundsChange(request, id):
-    user = request.user
     fundsChange = FundsChange.objects.get(id=id)
+    if request.method == "POST":
+
+        formData = viewsHelpers.getFundChangeFormData(request)
+
+        dashboard = formData["dashboard"]
+
+        #Get the month budget
+        budget = viewsHelpers.getBudget(dashboard)
+
+        #Get the month budget
+        budget = viewsHelpers.getBudget(dashboard)
+
+        if formData["formType"] == "Income":
+            viewsHelpers.editIncome(formData, budget, id)
+        else:
+            viewsHelpers.editExpense(formData, budget, id)
+
+        #redirect to the edited fundsChange
+        url = reverse('fundsChange', args=[fundsChange.budget.date, formData["destination"].title, formData["title"]])
+        return redirect(url)
+    
     balances = Funds.objects.filter(budget=fundsChange.budget).exclude(associatedFundsChanges=fundsChange)
     if fundsChange.is_expense:
         type = "Expense"
@@ -380,7 +396,6 @@ def editFundsChange(request, id):
         type = "Income"
 
     return render(request, "WalletWise/editFundsChange.html", {
-        'user': user,
         'fundsChange': fundsChange,
         'balances' : balances,
         'type' : type

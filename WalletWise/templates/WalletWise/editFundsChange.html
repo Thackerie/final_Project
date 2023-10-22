@@ -3,11 +3,11 @@
 {% block body %}
 <div class="container">
     <h1>Edit this {{fundsChange.type}}</h1>
-    <form method="post" action="#">
+    <form method="post" action="{% url 'editFundsChange' id=fundsChange.id %}">
         {% csrf_token %}
         <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" class="form-control" id="title" name="title" aria-describedby="titleHelp" value={{fundsChange.title}} placeholder="Enter Title" required title="Please enter a Title">
+            <input type="text" class="form-control" id="title" name="title" aria-describedby="titleHelp" value="{{fundsChange.title}}" placeholder="Enter Title" required title="Please enter a Title">
         </div>
         <div class="form-group">
             <label for="amount">Amount</label>

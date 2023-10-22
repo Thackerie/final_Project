@@ -5,10 +5,10 @@ from django.shortcuts import redirect
 from decimal import Decimal
 import datetime
 
-def getFundChangeFormData(request, user):
+def getFundChangeFormData(request):
 
     #Get the users dashboard
-    dashboard = Dashboard.objects.get(owner=user)
+    dashboard = Dashboard.objects.get(owner= request.user)
 
     #Get all form data
     action = request.POST.get('action')
@@ -156,11 +156,60 @@ def createExpense(formData, budget):
     formData["destination"].amount += expense.amount
     formData["destination"].save()
 
+def editExpense(formData, budget, id):
+    #get the expense
+    expense = FundsChange.objects.get(id=id)
+    
+
+    #remove previous expense from its destination
+    expense.destination.amount -= expense.amount
+    expense.destination.save()
+
+    #update the expense
+    expense.title = f"{formData['title']}"
+    expense.amount=Decimal(str(formData["amount"]))
+    expense.budget=budget
+    expense.destination=formData["destination"]
+    expense.reoccuring=formData["reoccuring"]
+    expense.is_expense=True
+    expense.description=formData["description"]
+
+    #save the updated expense
+    expense.save()
+
+    #Change the amount of the fund that the expense is coming from
+    formData["destination"].amount += expense.amount
+    formData["destination"].save()
+
 def createIncome(formData, budget):
     income = FundsChange.objects.create(title = formData["title"], amount=Decimal(str(formData["amount"])), budget=budget, destination=formData["destination"], reoccuring=formData["reoccuring"], is_expense=False, description=formData["description"])
     income.save()
 
     #Change the amount of the fund that the Income is going to
+    formData["destination"].amount += income.amount
+    formData["destination"].save()
+
+def editIncome(formData, budget, id):
+    #get the expense
+    income = FundsChange.objects.get(id=id)
+    
+    #remove previous expense from its destination
+    income.destination.amount -= income.amount
+    income.destination.save()
+
+    #update the expense
+    income.title = f"{formData['title']}"
+    income.amount=Decimal(str(formData["amount"]))
+    income.budget=budget
+    income.destination=formData["destination"]
+    income.reoccuring=formData["reoccuring"]
+    income.is_expense=False
+    income.description=formData["description"]
+
+    #save the updated expense
+    income.save()
+
+    #Change the amount of the fund that the expense is coming from
     formData["destination"].amount += income.amount
     formData["destination"].save()
 
