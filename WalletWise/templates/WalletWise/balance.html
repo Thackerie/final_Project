@@ -35,7 +35,7 @@
                         
                         <td>{{fundsChange.dateTime}}</td>
 
-                        <td><a class="btn btn-success" href="{% url 'fundsChange' date=budget.date balanceTitle=balance.title fundsTitle=fundsChange.title  %}" role="button">More</a></td>
+                        <td><a class="btn btn-success" href="{% url 'fundsChange' id=fundsChange.id  %}" role="button">More</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -47,7 +47,7 @@
         <h2>More Options</h2>
         <div class="row m-5">
             <div class="col-md-3"></div>
-            <div class="col-md-3"><a class="btn btn-warning" href="#" role="button">Edit Name [TODO]</a></div>
+            <div class="col-md-3"><a class="btn btn-warning" href="{% url 'editBalance' id=balance.id %}" role="button">Edit Name [TODO]</a></div>
             <div class="col-md-3"><a class="btn btn-danger" href="#" role="button">Delete [TODO]</a></div>
         </div>
     </div>

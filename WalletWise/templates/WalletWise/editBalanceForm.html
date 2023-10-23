@@ -1,0 +1,19 @@
+{% extends "WalletWise/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h1>Edit Balance</h1>
+    <form method="post" action="{% url 'editBalance' id=balance.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{balance.title}}" aria-describedby="titleHelp" placeholder="Enter Title" required title="Please enter a Title">
+            <small id="titlelHelp" class="form-text text-muted">You will find your Balance under this title in your dashboard later.</small>
+        </div>
+        <button type="submit" class="btn btn-success" name="action" value="submit">Submit</button>
+        <a href="#">
+            <button type="button" class="btn btn-success">Back to Balance</button>
+        </a>
+    </form>
+</div>
+{% endblock %}

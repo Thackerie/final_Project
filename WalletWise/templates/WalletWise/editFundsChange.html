@@ -36,7 +36,7 @@
             <small id="reoccuringHelp" class="form-text text-muted">Check this if your {{formType}} is reoccuring (Like rent,paychecks, etc.)</small>
         </div>
         <button type="submit" class="btn btn-success" name="action" value="submit">Submit</button>
-        <a href="{% url 'fundsChange' date=fundsChange.budget.date balanceTitle=fundsChange.destination.title fundsTitle=fundsChange.title %}">
+        <a href="{% url 'fundsChange' id=fundsChange.id %}">
             <button class="btn btn-success" type="button">Back to {{fundsChange.type}}</button>
         </a>
         <input type="hidden" value={{fundsChange.type}} name="formType">

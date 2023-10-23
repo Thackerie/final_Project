@@ -9,7 +9,7 @@
         <h2>Date: {{fundsChange.dateTime}}</h2>
 
         <div style="margin-top: 20px;">
-            <a style="float: left;" class="btn btn-danger" href="{% url 'balance' date=date title=balanceTitle  %}" role="button">To Correlating Balance</a>
+            <a style="float: left;" class="btn btn-danger" href="{% url 'balance' id=balanceId  %}" role="button">To Correlating Balance</a>
             <h2>Amount: {{fundsChange.amount}} EUR</h2>
             <h3>Description: {{fundsChange.description}}</h3>
         </div>

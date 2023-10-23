@@ -45,7 +45,7 @@
                             <td style="color: green;">{{fundsChange.amount}} EUR</td>
                             <td>{{fundsChange.destination.title}}</td>
                             <td>{{fundsChange.dateTime}}</td>
-                            <td><a class="btn btn-success" href="{% url 'fundsChange' date=budget.date balanceTitle=fundsChange.destination.title fundsTitle=fundsChange.title  %}" role="button">More</a></td>
+                            <td><a class="btn btn-success" href="{% url 'fundsChange' id=fundsChange.id  %}" role="button">More</a></td>
                         </tr>
                         {% endif %}
                     {% endfor %}

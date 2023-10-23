@@ -321,19 +321,12 @@ def changeMonthExpense(request, date):
         'dashboard' : dashboard
     })
 
-def balance(request, date, title):
-    user = request.user
-
-    dashboard = Dashboard.objects.get(owner=user)
-
-    currentBudget= MonthBudget.objects.filter(date=date, dashboard=dashboard)[0]
-
-    balance = Funds.objects.filter(title=title, budget=currentBudget)[0]
+def balance(request, id):
+    balance = Funds.objects.get(id=id)
+    currentBudget= balance.budget
 
     return render(request, "WalletWise/balance.html", {
-        'user':user,
         'balance': balance,
-        'dashboard' : dashboard,
         'budget': currentBudget
     })
 
@@ -347,14 +340,14 @@ def expenses(request):
         'dashboard' : answer["dashboard"]
     })
 
-def fundsChange(request, fundsTitle, date, balanceTitle):
+def fundsChange(request, id):
 
-    fundsChange = FundsChange.objects.filter(title=fundsTitle, budget__date=date)[0]
-    
+    fundsChange = FundsChange.objects.get(id=id)
+    balanceId = fundsChange.destination.id
+
     return render(request, "WalletWise/fundsChange.html", {
         'fundsChange' : fundsChange,
-        'date' : date,
-        'balanceTitle' : balanceTitle
+        'balanceId' : balanceId
     })
 
 def incomes(request):
@@ -377,16 +370,13 @@ def editFundsChange(request, id):
         #Get the month budget
         budget = viewsHelpers.getBudget(dashboard)
 
-        #Get the month budget
-        budget = viewsHelpers.getBudget(dashboard)
-
         if formData["formType"] == "Income":
             viewsHelpers.editIncome(formData, budget, id)
         else:
             viewsHelpers.editExpense(formData, budget, id)
 
         #redirect to the edited fundsChange
-        url = reverse('fundsChange', args=[fundsChange.budget.date, formData["destination"].title, formData["title"]])
+        url = reverse('fundsChange', args=[id])
         return redirect(url)
     
     balances = Funds.objects.filter(budget=fundsChange.budget).exclude(associatedFundsChanges=fundsChange)
@@ -399,4 +389,21 @@ def editFundsChange(request, id):
         'fundsChange': fundsChange,
         'balances' : balances,
         'type' : type
+    })
+
+def editBalance(request, id):
+    balance = Funds.objects.get(id=id)
+    if request.method == "POST":
+        #get new title
+        title = request.POST.get('title')
+        #check if title has nbeen changed
+        if title != balance.title:
+            #apply ches if there are any
+            balance.title = title
+            balance.save()
+        url = reverse('balance', args=[id])
+        return redirect(url)
+    
+    return render(request, "WalletWise/editBalanceForm.html", {
+        'balance' : balance
     })

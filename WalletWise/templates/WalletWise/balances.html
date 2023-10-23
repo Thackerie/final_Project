@@ -39,7 +39,7 @@
             <tr>
                 <th scope="row">{{balance.title}}</th>
                 <td>{{balance.amount}} EUR</td>
-                <td><a class="btn btn-success" href="{% url 'balance' date=budget.date title=balance.title %}" role="button">More</a></td>
+                <td><a class="btn btn-success" href="{% url 'balance' id=balance.id %}" role="button">More</a></td>
             </tr>
             {% endfor %}
         </tbody>
