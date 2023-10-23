@@ -9,7 +9,7 @@
         <h2>Your Balance as of {{budget.month}}/{{budget.year}}</h2>
 
         <div style="margin-top: 20px;">
-            <a style="float: left;" class="btn btn-danger" href="{% url 'balances' %}" role="button">Back</a>
+            <a style="float: left;" class="btn btn-danger" href="{% url 'changeMonthBalance' date=budget.date %}" role="button">Back</a>
             <h2>{{balance.amount}} EUR</h2>
         </div>
 
@@ -47,7 +47,7 @@
         <h2>More Options</h2>
         <div class="row m-5">
             <div class="col-md-3"></div>
-            <div class="col-md-3"><a class="btn btn-warning" href="{% url 'editBalance' id=balance.id %}" role="button">Edit Name [TODO]</a></div>
+            <div class="col-md-3"><a class="btn btn-warning" href="{% url 'editBalance' id=balance.id %}" role="button">Edit Name</a></div>
             <div class="col-md-3"><a class="btn btn-danger" href="#" role="button">Delete [TODO]</a></div>
         </div>
     </div>
