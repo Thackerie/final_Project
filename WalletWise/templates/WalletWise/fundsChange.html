@@ -13,6 +13,15 @@
                 <a class="btn btn-danger" href="{% url 'balance' id=balanceId  %}" role="button">To Correlating Balance</a>
             </div>
             <div class="col-md-4"><h2>Amount: {{fundsChange.amount}} EUR</h2></div>
+            {% if fundsChange.is_expense %}
+            <div class="col-md-4">
+                <a class="btn btn-danger" href="{% url 'changeMonthIncome' date=fundsChange.destination.budget.date  %}" role="button">To all Expenses</a>
+            </div>
+            {% else %}
+            <div class="col-md-4">
+                <a class="btn btn-danger" href="{% url 'changeMonthIncome' date=fundsChange.destination.budget.date  %}" role="button">To all Incomes</a>
+            </div>
+            {% endif %}
         </div>
         <h3>Description: {{fundsChange.description}}</h3>
 
