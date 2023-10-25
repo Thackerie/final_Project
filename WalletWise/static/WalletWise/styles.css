@@ -1,7 +1,19 @@
 body {
-    padding-top: 70px;
+    padding-top: 8rem; /* Adjust the padding value as needed */
     font-family: 'Inconsolata', monospace;
-}
+  }
+  
+  @media (max-width: 576px) {
+    body {
+      padding-top: 17rem; /* Adjust the padding value for small screens */
+    }
+  }
+  
+  @media (min-width: 577px) and (max-width: 991px) {
+    body {
+      padding-top: 14rem; /* Adjust the padding value for medium screens */
+    }
+  }
 
 .dashboard-setup-button {
     margin-top: 5px;
