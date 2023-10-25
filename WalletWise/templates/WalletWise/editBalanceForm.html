@@ -11,7 +11,7 @@
             <small id="titlelHelp" class="form-text text-muted">You will find your Balance under this title in your dashboard later.</small>
         </div>
         <button type="submit" class="btn btn-success" name="action" value="submit">Submit</button>
-        <a href="#">
+        <a href="{% url 'balance' id=balance.id %}">
             <button type="button" class="btn btn-success">Back to Balance</button>
         </a>
     </form>
