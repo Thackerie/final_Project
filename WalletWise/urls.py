@@ -16,7 +16,8 @@ urlpatterns = [
     path("balances", views.balances, name="balances"),
     path("balances/month/<str:date>", views.changeMonthBalance, name="changeMonthBalance"),
     path("balances/<int:id>/edit", views.editBalance, name="editBalance"),
-    path("balances/<int:id>", views.balance, name="balance"),
+    path("balances/<int:id>/", views.balance, name="balance"),
+    path("balances/<int:id>/delete", views.deleteBalance, name="deleteBalance"),
     path("incomes", views.incomes, name="incomes"),
     path("incomes/<str:date>", views.changeMonthIncome, name="changeMonthIncome"),
     path("fundsChanges/<int:id>/edit", views.editFundsChange, name="editFundsChange"),
@@ -24,5 +25,4 @@ urlpatterns = [
     path("expenses/<str:date>", views.changeMonthExpense, name="changeMonthExpense"),
     path("dashboard", views.dashboard_view, name="dashboard"),
     path("dashboard/finished", views.dashboard_finished, name="dashboard_finished"),    
-
 ]

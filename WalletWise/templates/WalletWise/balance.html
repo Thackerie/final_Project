@@ -1,6 +1,10 @@
 {% extends "WalletWise/layout.html" %}
+{% load static %}
 
 {% block title %}{{balance.title}}{% endblock %}
+{% block script %}
+    <script src="{% static 'WalletWise/delete.js' %}"></script>
+{% endblock %}
 
 {% block body %}
     <div class="container text-center">
@@ -48,7 +52,7 @@
         <div class="row m-5">
             <div class="col-md-3"></div>
             <div class="col-md-3"><a class="btn btn-warning" href="{% url 'editBalance' id=balance.id %}" role="button">Edit Name</a></div>
-            <div class="col-md-3"><a class="btn btn-danger" href="#" role="button">Delete [TODO]</a></div>
+            <div class="col-md-3"><a class="btn btn-danger" id="delete-button" role="button">Delete Balance</a></div>
         </div>
     </div>
 {% endblock %}

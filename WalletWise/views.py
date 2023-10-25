@@ -407,3 +407,8 @@ def editBalance(request, id):
     return render(request, "WalletWise/editBalanceForm.html", {
         'balance' : balance
     })
+
+def deleteBalance(request, id):
+    balance = Funds.objects.get(id=id)
+    balance.delete()
+    return redirect(reverse('balances'))
