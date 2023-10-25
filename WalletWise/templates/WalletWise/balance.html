@@ -12,9 +12,13 @@
         
         <h2>Your Balance as of {{budget.month}}/{{budget.year}}</h2>
 
-        <div style="margin-top: 20px;">
-            <a style="float: left;" class="btn btn-danger" href="{% url 'changeMonthBalance' date=budget.date %}" role="button">Back</a>
-            <h2>{{balance.amount}} EUR</h2>
+        <div style="margin-top: 20px;" class="row">
+            <div class="col-md-4">
+                <a class="btn btn-danger" href="{% url 'changeMonthBalance' date=budget.date %}" role="button">Back</a>
+            </div>
+            <div class="col-md-4">
+                <h2>{{balance.amount}} EUR</h2>
+            </div>
         </div>
 
         {% if balance.associatedFundsChanges.all|length > 0 %}
