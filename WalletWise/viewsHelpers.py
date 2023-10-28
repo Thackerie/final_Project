@@ -1,5 +1,5 @@
 from django.utils import timezone
-from .models import User, Dashboard, Funds, MonthBudget, FundsChange
+from .models import Dashboard, Funds, MonthBudget, FundsChange
 from django.urls import reverse
 from django.shortcuts import redirect
 from decimal import Decimal

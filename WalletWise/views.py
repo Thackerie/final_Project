@@ -1,6 +1,7 @@
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils import timezone
 import datetime
@@ -8,9 +9,6 @@ from django.db import IntegrityError
 from . import viewsHelpers
 from .models import User, Dashboard, Funds, MonthBudget, FundsChange
 # Create your views here.
-
-def index(request):
-    return render(request, "WalletWise/index.html") 
 
 def login_view(request):
     if request.method == "POST":
@@ -23,7 +21,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("dashboard"))
         else:
             return render(request, "WalletWise/login.html", {
                 "message": "Invalid username and/or password."
@@ -33,7 +31,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("dashboard"))
 
 def signup(request):
     if request.method == "POST":
@@ -70,7 +68,7 @@ def signup(request):
         return dashboard_view(request)
     else:
         return render(request,"WalletWise/signup.html")
-
+@login_required
 def settings(request):
 
     #Get the correlating user object and balances
@@ -115,11 +113,13 @@ def settings(request):
         'user':user,
         'balances' : balances 
         })
-
+@login_required
 def dashboard_view(request):
+    
 
     #Get the correlating user object
     user = request.user
+
 
     #Try Getting the users dashboard
     try:
@@ -147,7 +147,7 @@ def dashboard_view(request):
         'budget': currentBudget,
         "dashboard" : dashboard
         })
-
+@login_required
 def dashboard_finished(request):
 
     #Get the user and their dashboard
@@ -158,7 +158,7 @@ def dashboard_finished(request):
     dashboard.save()
     #Then redirect to the dashboard page
     return redirect(reverse('dashboard'))
-
+@login_required
 def fundForm(request):
 
     #Get the associated user
@@ -187,7 +187,7 @@ def fundForm(request):
 
     else:
         return render(request, "WalletWise/fundForm.html")
-
+@login_required
 def incomeForm(request):
     user = request.user
     budget= MonthBudget.objects.filter(dashboard__owner=user, date__month=datetime.datetime.now().month)[0]
@@ -205,7 +205,7 @@ def incomeForm(request):
         "balances" : balances,
         "defaultFund" : defaultFund
     })
-
+@login_required
 def transferFundsForm(request):
 
     user = request.user
@@ -227,7 +227,7 @@ def transferFundsForm(request):
     return render(request, "WalletWise/transferFundsForm.html", {
         "balances" : balances
     })
-
+@login_required
 def fundsChangeForm(request):
     if request.method == "POST":
 
@@ -248,7 +248,7 @@ def fundsChangeForm(request):
         
         #Find out where the page needs to be redirected to
         return viewsHelpers.handleFormRedirect(formData["formType"], formData["action"], dashboard)
-        
+@login_required        
 def expenseForm(request):
 
     user = request.user
@@ -268,7 +268,7 @@ def expenseForm(request):
         "balances" : balances,
         "defaultFund" : defaultFund
     })
-
+@login_required
 def balances(request):
     answer = viewsHelpers.getCurrentBudget(request)
 
@@ -278,7 +278,7 @@ def balances(request):
         'budget': answer["currentBudget"],
         'dashboard' : answer["dashboard"]
     })
-
+@login_required
 def changeMonthBalance(request, date):
 
     user = request.user
@@ -292,7 +292,7 @@ def changeMonthBalance(request, date):
         'budget': currentBudget,
         'dashboard' : dashboard
     })
-
+@login_required
 def changeMonthIncome(request, date):
 
     user = request.user
@@ -306,7 +306,7 @@ def changeMonthIncome(request, date):
         'budget': currentBudget,
         'dashboard' : dashboard
     })
-
+@login_required
 def changeMonthExpense(request, date):
 
     user = request.user
@@ -320,7 +320,7 @@ def changeMonthExpense(request, date):
         'budget': currentBudget,
         'dashboard' : dashboard
     })
-
+@login_required
 def balance(request, id):
     balance = Funds.objects.get(id=id)
     currentBudget= balance.budget
@@ -329,7 +329,7 @@ def balance(request, id):
         'balance': balance,
         'budget': currentBudget
     })
-
+@login_required
 def expenses(request):
     answer = viewsHelpers.getCurrentBudget(request)
 
@@ -339,7 +339,7 @@ def expenses(request):
         'budget': answer["currentBudget"],
         'dashboard' : answer["dashboard"]
     })
-
+@login_required
 def fundsChange(request, id):
 
     fundsChange = FundsChange.objects.get(id=id)
@@ -349,7 +349,7 @@ def fundsChange(request, id):
         'fundsChange' : fundsChange,
         'balanceId' : balanceId
     })
-
+@login_required
 def incomes(request):
     answer = viewsHelpers.getCurrentBudget(request)
 
@@ -358,7 +358,7 @@ def incomes(request):
         'budget': answer["currentBudget"],
         'dashboard' : answer["dashboard"]
     })
-
+@login_required
 def editFundsChange(request, id):
     fundsChange = FundsChange.objects.get(id=id)
     if request.method == "POST":
@@ -390,7 +390,7 @@ def editFundsChange(request, id):
         'balances' : balances,
         'type' : type
     })
-
+@login_required
 def editBalance(request, id):
     balance = Funds.objects.get(id=id)
     if request.method == "POST":
@@ -407,7 +407,7 @@ def editBalance(request, id):
     return render(request, "WalletWise/editBalanceForm.html", {
         'balance' : balance
     })
-
+@login_required
 def deleteBalance(request, id):
     balance = Funds.objects.get(id=id)
     balance.delete()
