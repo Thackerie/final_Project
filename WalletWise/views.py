@@ -209,6 +209,7 @@ def incomeForm(request):
 def transferFundsForm(request):
 
     user = request.user
+    budget = MonthBudget.objects.filter(dashboard__owner=user, date__month=datetime.datetime.now().month)[0]
 
     if request.method == "POST":
 
@@ -223,7 +224,7 @@ def transferFundsForm(request):
         
         return redirect(reverse('dashboard'))
     
-    balances = list(Funds.objects.filter(budget__dashboard__owner=user))
+    balances = list(Funds.objects.filter(budget=budget))
     return render(request, "WalletWise/transferFundsForm.html", {
         "balances" : balances
     })
